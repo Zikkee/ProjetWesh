@@ -7,6 +7,9 @@ class Utilisateur(models.Model):
 	nom = models.CharField(max_length=200)
 	mail = models.CharField(max_length=200)
 
+	def __unicode__(self):
+		return self.prenom + " " + self.nom
+
 class Secretaire(Utilisateur):
 	pass
 	
@@ -17,8 +20,14 @@ class Promotion(models.Model):
 	nom = models.CharField(max_length=200)
 	responsable = models.ForeignKey(Enseignant)
 
+	def __unicode__(self):
+		return self.nom
+
 class Matiere (models.Model):
 	intitule = models.CharField(max_length = 200)
+	
+	def __unicode__(self):
+		return self.intitule
 
 class Etudiant(Utilisateur):
 	promotion = models.ForeignKey(Promotion)
@@ -26,6 +35,9 @@ class Etudiant(Utilisateur):
 class Groupe(models.Model):
 	nom = models.CharField(max_length=200)
 	etudiants = models.ManyToManyField(Etudiant, related_name='membresGroupe+')
+
+	def __unicode__(self):
+		return self.nom	
 
 class Cours (models.Model):
 	dateDebut = models.DateTimeField(auto_now = True, auto_now_add = False)
@@ -35,11 +47,15 @@ class Cours (models.Model):
 	donne_a = models.ForeignKey(Groupe)
 	donne_par = models.ManyToManyField(Enseignant, related_name = 'donne_par')
 
+	def __unicode__(self):
+		return self.matiere.intitule
+
 class Departement (models.Model):
 	nom = models.CharField(max_length = 200)
 	directeur = models.ForeignKey(Enseignant, related_name= 'a_pour_directeur')
-
-
+	
+	def __unicode__(self):
+		return self.nom
 
 class Justificatif (models.Model):
 	genre = models.CharField(max_length = 200)
