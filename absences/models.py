@@ -27,3 +27,4 @@ class Absence:
 	etudiant: models.ForeignKey(Etudiant)
 	cours: models.ForeignKey(Cours)
 	justifie: models.BooleanField(default=False)
+	justificatif: models.ForeignKey(Justificatif)
