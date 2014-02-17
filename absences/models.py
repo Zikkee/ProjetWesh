@@ -39,13 +39,15 @@ class Departement (models.Model):
 	nom = models.CharField(max_length = 200)
 	directeur = models.ForeignKey(Enseignant, related_name= 'a_pour_directeur')
 
+
+
 class Justificatif (models.Model):
 	genre = models.CharField(max_length = 200)
 	dateDebut = models.DateTimeField(auto_now = False, auto_now_add = False)
 	dateFin = models.DateTimeField(auto_now = False, auto_now_add = False)
 	matiere = models.ManyToManyField(Matiere, related_name = 'vaut_pour_la_matiere')
-
-class Absence:
+	
+class Absence (models.Model):
 	etudiant = models.ForeignKey(Etudiant)
 	cours = models.ForeignKey(Cours)
 	justifie = models.BooleanField(default=False)
