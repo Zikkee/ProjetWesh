@@ -35,9 +35,6 @@ class Cours (models.Model):
 	donne_a = models.ForeignKey(Groupe)
 	donne_par = models.ManyToManyField(Enseignant, related_name = 'donne_par')
 
-class Matiere (models.Model):
-	intitule = models.CharField(max_length = 200)
-
 class Departement (models.Model):
 	nom = models.CharField(max_length = 200)
 	directeur = models.ForeignKey(Enseignant, related_name= 'a_pour_directeur')
