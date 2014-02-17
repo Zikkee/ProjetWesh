@@ -1,5 +1,6 @@
 from django.db import models
 
+<<<<<<< HEAD
 class Cours (models.Model):
 	dateDebut = models.DateTimeField(auto_now = True, auto_now_add = False)
 	dateFin = models.DateTimeField(auto_now = True, auto_now_add = False)
@@ -48,3 +49,4 @@ class Absence:
 	etudiant: models.ForeignKey(Etudiant)
 	cours: models.ForeignKey(Cours)
 	justifie: models.BooleanField(default=False)
+	justificatif: models.ForeignKey(Justificatif)
