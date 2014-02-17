@@ -1,6 +1,5 @@
 from django.db import models
 
-<<<<<<< HEAD
 class Cours (models.Model):
 	dateDebut = models.DateTimeField(auto_now = True, auto_now_add = False)
 	dateFin = models.DateTimeField(auto_now = True, auto_now_add = False)
@@ -21,7 +20,7 @@ class Justificatif (models.Model):
 	dateDebut = models.DateTimeField(auto_now = False, auto_now_add = False)
 	dateFin = models.DateTimeField(auto_now = False, auto_now_add = False)
 	matiere = models.ManyToManyField(Justificatif, related_name = 'vaut_pour_la_matiere')
-=======
+
 class Utilisateur(models.Model):
 	identifiant: models.CharField(max_length=200)
 	prenom: models.CharField(max_length=200)
@@ -49,4 +48,3 @@ class Absence:
 	etudiant: models.ForeignKey(Etudiant)
 	cours: models.ForeignKey(Cours)
 	justifie: models.BooleanField(default=False)
->>>>>>> 281e30ebe0efaaf136364822d1fc165a193c6b16
