@@ -39,8 +39,6 @@ class Departement (models.Model):
 	nom = models.CharField(max_length = 200)
 	directeur = models.ForeignKey(Enseignant, related_name= 'a_pour_directeur')
 
-
-
 class Justificatif (models.Model):
 	genre = models.CharField(max_length = 200)
 	dateDebut = models.DateTimeField(auto_now = False, auto_now_add = False)
