@@ -1,0 +1,17 @@
+<h1>Liste des cours</h1>
+
+<ul>
+{% for cours in listeCours %}
+	<li><strong>{{cours.matiere.intitule}}</strong>
+		<ul>
+			<li>Donné par : {% for enseignant in cours.donne_par.all %} {{enseignant.prenom}} {{enseignant.nom}}{% if not forloop.last %}, {%endif%}{% endfor %}</li>
+			<li>Groupe : {{cours.donne_a.nom}}</li>
+			<li>Début : {{cours.dateDebut|date:"d/m/Y"}} à {{cours.dateDebut|time:"H:i"}}</li>
+			<li>Fin : {{cours.dateDebut|date:"d/m/Y"}} à {{cours.dateDebut|time:"H:i"}}</li>
+			<li><a href="{% url 'absences:consultationCours' cours.id %}">Voir les absences</a></li>
+		</ul>
+	</li>
+	{%empty%}
+	<li>Aucun cours n'est présent dans la base</li>
+{% endfor %}
+</ul>
