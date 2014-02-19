@@ -13,9 +13,11 @@ class CoursListView(ListView):
 	template_name = 'absences/listeCours.html' #redéfinition du template, au lieu de cours_list.html
 
 	def get_queryset(self):
-		if self.args[0] and self.args[1] and self.args[2]:
-			dateAujourdhuiDebut = datetime(int(self.args[0]), int(self.args[1]), int(self.args[2]), 0, 0, 0)
-			dateAujourdhuiFin = datetime(int(self.args[0]), int(self.args[1]), int(self.args[2]), 23, 59, 59)
+		if self.args[0]:
+			dateAujourdhuiDebut = datetime.now()
+			dateAujourdhuiFin = datetime.now()
+			# dateAujourdhuiDebut = datetime(int(self.args[0]), int(self.args[1]), int(self.args[2]), 0, 0, 0)
+			# dateAujourdhuiFin = datetime(int(self.args[0]), int(self.args[1]), int(self.args[2]), 23, 59, 59)
 		else:
 			dateAujourdhuiDebut = datetime.now().replace(hour=0, minute=0, second=0)
 			dateAujourdhuiFin = datetime.now().replace(hour=23, minute=59, second=59)
