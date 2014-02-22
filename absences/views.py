@@ -5,7 +5,8 @@ from absences.models import Cours
 from django.http import HttpResponse
 from django.views.generic.list import ListView
 
-from datetime import datetime
+def index(request):
+	return render(request, 'absences/index.html')
 
 class CoursListView(ListView):
 	model = Cours

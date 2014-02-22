@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+	<head>
+		<title>Gestion des absences &bull; Index</title>
+		{% load staticfiles %}
+		<link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.min.css' %}" />
+	</head>
+	<body>
+
+	<!-- Barre de navigation -->
+	<nav class="navbar navbar-inverse navbar-static-top" role="navigation">
+		<div class="container-fluid">
+			<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+				<ul class="nav navbar-nav">
+					<li><a href="#">Acceuil</a></li>
+					<li><a href="#">Cours</a></li>
+				</ul>
+			</div>
+		</div>
+	</nav>
+	<!-- Fin barre de navigation -->
+
+	<h1>Gestion des absences <small>Polytech Nantes</small></h1>
+
+	{% block content %}
+
+	{% endblock %}
+	</body>
+</html>
