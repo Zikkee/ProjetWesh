@@ -1,17 +1,39 @@
-<h1>Liste des cours</h1>
+{% extends 'general.html' %}
 
-<ul>
+
+{%block content %}
+<h2>Liste des cours donnés</h2>
+
+{% if is_paginated %}
+	{% include 'pagination.html' %}
+{%endif%}
+
+<table class="table table-hover">
+	<tr>
+		<th>Cours</th>
+		<th>Enseignant(s)</th>
+		<th>Groupe</th>
+		<th>Début</th>
+		<th>Fin</th>
+	</tr>
 {% for cours in listeCours %}
-	<li><strong>{{cours.matiere.intitule}}</strong>
-		<ul>
-			<li>Donné par : {% for enseignant in cours.donne_par.all %} {{enseignant.prenom}} {{enseignant.nom}}{% if not forloop.last %}, {%endif%}{% endfor %}</li>
-			<li>Groupe : {{cours.donne_a.nom}}</li>
-			<li>Début : {{cours.dateDebut|date:"d/m/Y"}} à {{cours.dateDebut|time:"H:i"}}</li>
-			<li>Fin : {{cours.dateDebut|date:"d/m/Y"}} à {{cours.dateDebut|time:"H:i"}}</li>
-			<li><a href="{% url 'absences:consultationCours' cours.id %}">Voir les absences</a></li>
-		</ul>
-	</li>
+	<tr>
+		<td><p><strong><a href="{% url 'absences:consultationCours' cours.id %}" title="Voir les absences">{{cours.matiere.intitule}}</a></strong></p></td>
+		<td>{% for enseignant in cours.donne_par.all %} {{enseignant.prenom}} {{enseignant.nom}}{% if not forloop.last %}, {%endif%}{% endfor %}</td>
+		<td>{{cours.donne_a.nom}}</td>
+		<td>{{cours.dateDebut|date:"d/m/Y"}} à {{cours.dateDebut|time:"H:i"}}</td>
+		<td>{{cours.dateDebut|date:"d/m/Y"}} à {{cours.dateDebut|time:"H:i"}}</td>
+	</tr>
 	{%empty%}
-	<li>Aucun cours n'est présent dans la base</li>
+	<tr>
+		<td colspan="5">Aucun cours ne correspond à cette date</td>
+	</tr>
 {% endfor %}
-</ul>
+</table>
+
+{% if is_paginated %}
+	{% include 'pagination.html' %}
+{%endif%}
+
+{%endblock %}
+
