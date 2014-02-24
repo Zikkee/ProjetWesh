@@ -1,0 +1,18 @@
+{% extends 'general.html' %}
+{% block title %} Se connecter {%endblock%}
+
+{% block content %}
+
+	{% if user.is_authenticated %}
+	déjà connecté !!!!!!!
+	{% endif %}
+	<h2>Se connecter</h2>
+	{% if error %}
+	<p><span class="label label-danger">L'identifiant et/ou le mot de passe sont faux</span></p>
+	{%endif%}
+	<form method="post" action="">
+		{% csrf_token %}
+		{{ form.as_p }}
+		<button type="submit" class="btn btn-default">Se connecter</button>
+	</form>
+{% endblock %}
