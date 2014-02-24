@@ -1,14 +1,15 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 class Utilisateur(models.Model):
-	identifiant = models.CharField(max_length=200)
-	prenom = models.CharField(max_length=200)
-	mdp = models.CharField(max_length=200)
-	nom = models.CharField(max_length=200)
-	mail = models.CharField(max_length=200)
+	user = models.OneToOneField(User)
+	# prenom = models.CharField(max_length=200)
+	# mdp = models.CharField(max_length=200)
+	# nom = models.CharField(max_length=200)
+	# mail = models.CharField(max_length=200)
 
 	def __unicode__(self):
-		return self.prenom + " " + self.nom
+		return self.user.first_name + " " + self.user.last_name
 
 class Secretaire(Utilisateur):
 	pass
