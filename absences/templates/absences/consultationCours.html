@@ -1,0 +1,67 @@
+{% extends 'general.html' %}
+
+{% block title %} 
+	Détails du cours {{ cours.matiere.intitule }}
+{% endblock %}
+
+{% block content %}
+
+	<h2>Détails du cours "{{cours.matiere.intitule}}"</h2>
+
+	<div style="margin-bottom:20px;">
+		<p class="label label-info">
+			Donné le {{ cours.dateDebut|date:"d/m/Y" }} de {{ cours.dateDebut|time:"H:i" }} à {{ cours.dateFin|time:"H:i"}}
+			par 
+			{% for enseignant in cours.donne_par.all %} 
+				{{enseignant.prenom}} {{enseignant.nom}}
+				{% if not forloop.last %}, {%endif%}
+			{% endfor %}
+			au groupe {{cours.donne_a}}
+		</p>
+	</div>
+
+{% if cours.saisieEffectuee or absences%}
+<div class="alert alert-success">
+	<p>La saisie pour ce cours a déjà été effectuée</p>
+</div>
+{% else %}
+<div class="alert alert-danger">
+	<p>La saisie pour ce cours n'a pas été effectuée</p>
+</div>
+{% endif %}
+	<div>
+		<h3>Liste des étudiants absents :</h3>
+		<table class="table table-hover">
+			<tr>
+				<th>Prénom</th>
+				<th>Nom</th>
+				<th>Groupe</th>
+				<th>Promotion</th>
+				<th>Justifié</th>
+				<th>Justificatif</th>
+			</tr>
+			{% for absence in absences.all %}
+			<tr>
+				<td>{{absence.etudiant.prenom}}</td>
+				<td>{{absence.etudiant.nom}}</td>
+				<td>{{cours.donne_a.nom}}</td>
+				<td>{{absence.etudiant.promotion}}</td>
+				{% if absence.justifie %}
+					<td class="alert alert-success">Oui</td>
+				{% else %}
+					<td class="alert alert-danger">Non</td>
+				{% endif %}
+				<td>
+					{% if not absence.justifie %}
+					<a href="#" class="btn btn-primary btn-sm" role="button">Ajouter un justificatif</a></td>
+					{% else %}
+					<a href="#" class="btn btn-primary btn-sm" role="button">Voir le justificatif</a></td>
+					{% endif %}
+			</tr>
+			{% empty %}
+			<tr>
+				<td colspan="5">Aucun étudiant n'a assisté au cours</td>
+			</tr>
+			{% endfor %}
+	</table>
+{%endblock%}

@@ -19,6 +19,7 @@
 		<th>Groupe</th>
 		<th>Début</th>
 		<th>Fin</th>
+		<th>Saisie effectuée</th>
 	</tr>
 {% for cours in listeCours %}
 	<tr>
@@ -27,10 +28,15 @@
 		<td>{{cours.donne_a.nom}}</td>
 		<td>{{cours.dateDebut|date:"d/m/Y"}} à {{cours.dateDebut|time:"H:i"}}</td>
 		<td>{{cours.dateDebut|date:"d/m/Y"}} à {{cours.dateDebut|time:"H:i"}}</td>
+		{% if cours.saisieEffectuee %}
+			<td class="alert alert-success">Oui</td>
+		{% else %}
+			<td class="alert alert-danger">Non</td>
+		{% endif %}
 	</tr>
 	{%empty%}
 	<tr>
-		<td colspan="5">Aucun cours ne correspond à cette date</td>
+		<td colspan="6">Aucun cours ne correspond à cette date</td>
 	</tr>
 {% endfor %}
 </table>

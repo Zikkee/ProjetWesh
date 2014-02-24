@@ -1,10 +1,10 @@
 #-*- coding: utf-8 -*-
 
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse
 from django.views.generic.list import ListView
 
-from absences.models import Cours 
+from absences.models import Cours, Absence
 
 from datetime import datetime
 from calendar import monthrange
@@ -17,7 +17,7 @@ class CoursListView(ListView):
 	model = Cours
 	context_object_name = 'listeCours'
 	template_name = 'absences/listeCours.html'
-	paginate_by = 1
+	paginate_by = 10
 
 # Affiche tous les cours d'une année
 class CoursListViewAnne (CoursListView):
@@ -45,4 +45,7 @@ class CoursListViewJour (CoursListView):
 		return Cours.objects.filter(dateDebut__gte = dateDebut, dateFin__lte = dateFin)
 
 def consultationCours(request, cours_id):
-	return HttpResponse("consultation du cours " + cours_id)
+	cours = get_object_or_404(Cours, pk=cours_id)
+	absences = Absence.objects.filter(cours_id = cours_id)
+
+	return render(request, 'absences/consultationCours.html', {'cours':cours, 'absences':absences})
