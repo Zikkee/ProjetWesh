@@ -1,13 +1,11 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+
+
 class Utilisateur(models.Model):
 	user = models.OneToOneField(User)
-	# prenom = models.CharField(max_length=200)
-	# mdp = models.CharField(max_length=200)
-	# nom = models.CharField(max_length=200)
-	# mail = models.CharField(max_length=200)
-
+	
 	def __unicode__(self):
 		return self.user.first_name + " " + self.user.last_name
 
@@ -64,6 +62,12 @@ class Justificatif (models.Model):
 	dateFin = models.DateTimeField(auto_now = False, auto_now_add = False)
 	matiere = models.ManyToManyField(Matiere, related_name = 'vaut_pour_la_matiere')
 	
+	class Meta:
+		permissions = (
+			('can_ajouterJustificatif', 'Peut ajouter un justificatif'),
+			('can_modifierJustificatif', 'Peut modifier un justificatif'),
+		)
+
 class Absence (models.Model):
 	etudiant = models.ForeignKey(Etudiant)
 	cours = models.ForeignKey(Cours)
