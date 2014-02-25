@@ -30,10 +30,17 @@
 
 	<h1>Gestion des absences <small>Polytech Nantes</small></h1>
 
+	{% if success %}
+		<div class="alert alert-success">
+			{{success}}
+		</div>
+	{% endif %}
+
+	<div id="content">
 	{% block content %}
 
 	{% endblock %}
-
+	</div>
 	<script src="{% static 'js/jquery.min.js' %}" type="text/javascript"></script>
 	<script src="{% static 'js/bootstrap.min.js' %}" type="text/javascript"></script>
 	<script src="{% static 'js/scripts.js' %}" type="text/javascript"></script>

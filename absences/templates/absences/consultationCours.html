@@ -20,13 +20,20 @@
 		</em></p>
 	</div>
 
-{% if cours.saisieEffectuee or absences%}
+{% if cours.saisieEffectuee%}
 <div class="alert alert-success">
-	<p>La saisie pour ce cours a déjà été effectuée</p>
+	<p><span class="glyphicon glyphicon-ok"></span>
+ La saisie pour ce cours a été effectuée.</p>
 </div>
 {% else %}
 <div class="alert alert-danger">
-	<p>La saisie pour ce cours n'a pas été effectuée</p>
+	<p>La saisie des absences n'a pas été effectuée pour ce cours.<br />
+		
+		<a href="{% url 'absences:saisieAbsences' cours.id %}" title="Saisir les absences"><button type="button" class="btn btn-default">
+			<span class="glyphicon glyphicon-pencil"></span> 
+			Saisir les absences
+		</button></a>
+	</p>
 </div>
 {% endif %}
 	<div>
