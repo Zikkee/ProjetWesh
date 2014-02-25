@@ -98,5 +98,5 @@ TEMPLATE_LOADERS = (
 
 TEMPLATE_DIRS = [os.path.join(BASE_DIR, 'templates')]
 
-LOGIN_URL = '/absences/connexion/'
-LOGIN_REDIRECT_URL = '/absences/'
+LOGIN_URL = '/connexion/'
+LOGIN_REDIRECT_URL = '/'
