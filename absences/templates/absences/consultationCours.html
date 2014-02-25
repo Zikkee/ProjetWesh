@@ -13,7 +13,7 @@
 			Donné le {{ cours.dateDebut|date:"d/m/Y" }} de {{ cours.dateDebut|time:"H:i" }} à {{ cours.dateFin|time:"H:i"}}
 			par 
 			{% for enseignant in cours.donne_par.all %} 
-				{{enseignant.prenom}} {{enseignant.nom}}
+				{{enseignant.user.first_name}} {{enseignant.user.last_name}}
 				{% if not forloop.last %}, {%endif%}
 			{% endfor %}
 			au groupe {{cours.donne_a}}
@@ -42,8 +42,8 @@
 			</tr>
 			{% for absence in absences.all %}
 			<tr>
-				<td>{{absence.etudiant.prenom}}</td>
-				<td>{{absence.etudiant.nom}}</td>
+				<td>{{absence.etudiant.user.first_name}}</td>
+				<td>{{absence.etudiant.user.last_name}}</td>
 				<td>{{cours.donne_a.nom}}</td>
 				<td>{{absence.etudiant.promotion}}</td>
 				{% if absence.justifie %}

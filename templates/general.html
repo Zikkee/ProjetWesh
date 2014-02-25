@@ -11,8 +11,16 @@
 		<div class="container-fluid">
 			<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 				<ul class="nav navbar-nav">
+					{% if user.is_authenticated %}
+					<li><a href="">Bienvenue, {{user.first_name}}</a></li>
+					{% endif %}
 					<li><a href="{% url 'absences:index' %}">Acceuil</a></li>
-					<li><a href="{% url 'absences:listeCours' %}">Cours</a></li>
+					<li><a href="{% url 'absences:listeCours'%} ">Cours</a></li>
+					{% if user.is_authenticated %}
+					<li><a href="{% url 'absences:deconnexion' %}" title="Deconnexion">Déconnexion</a></li>
+					{% else %}
+					<li><a href="{% url 'absences:connexion' %}" title="Connexion">Connexion</a></li>
+					{% endif %}
 				</ul>
 			</div>
 		</div>

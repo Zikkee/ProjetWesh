@@ -24,7 +24,7 @@
 {% for cours in listeCours %}
 	<tr>
 		<td><p><strong><a href="{% url 'absences:consultationCours' cours.id %}" title="Voir les absences">{{cours.matiere.intitule}}</a></strong></p></td>
-		<td>{% for enseignant in cours.donne_par.all %} {{enseignant.prenom}} {{enseignant.nom}}{% if not forloop.last %}, {%endif%}{% endfor %}</td>
+		<td>{% for enseignant in cours.donne_par.all %} {{enseignant.user.first_name}} {{enseignant.user.last_name}}{% if not forloop.last %}, {%endif%}{% endfor %}</td>
 		<td>{{cours.donne_a.nom}}</td>
 		<td>{{cours.dateDebut|date:"d/m/Y"}} à {{cours.dateDebut|time:"H:i"}}</td>
 		<td>{{cours.dateDebut|date:"d/m/Y"}} à {{cours.dateDebut|time:"H:i"}}</td>
