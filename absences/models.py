@@ -72,4 +72,4 @@ class Absence (models.Model):
 	etudiant = models.ForeignKey(Etudiant)
 	cours = models.ForeignKey(Cours)
 	justifie = models.BooleanField(default=False)
-	justificatif = models.ForeignKey(Justificatif)
+	justificatif = models.ForeignKey(Justificatif, null=True,blank=True)

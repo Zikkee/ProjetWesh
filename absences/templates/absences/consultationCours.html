@@ -9,7 +9,7 @@
 	<h2>Détails du cours "{{cours.matiere.intitule}}"</h2>
 
 	<div style="margin-bottom:20px;">
-		<p class="label label-info">
+		<p><em>
 			Donné le {{ cours.dateDebut|date:"d/m/Y" }} de {{ cours.dateDebut|time:"H:i" }} à {{ cours.dateFin|time:"H:i"}}
 			par 
 			{% for enseignant in cours.donne_par.all %} 
@@ -17,7 +17,7 @@
 				{% if not forloop.last %}, {%endif%}
 			{% endfor %}
 			au groupe {{cours.donne_a}}
-		</p>
+		</em></p>
 	</div>
 
 {% if cours.saisieEffectuee or absences%}
@@ -53,7 +53,12 @@
 				{% endif %}
 				<td>
 					{% if not absence.justifie %}
-					<a href="#" class="btn btn-primary btn-sm" role="button">Ajouter un justificatif</a></td>
+						{% if perms.absences.can_ajouterJustificatif %}
+							<a href="#" class="btn btn-primary btn-sm" role="button">Ajouter un justificatif</a></td>
+						{% else %}
+						- 
+						{%endif%}
+
 					{% else %}
 					<a href="#" class="btn btn-primary btn-sm" role="button">Voir le justificatif</a></td>
 					{% endif %}
