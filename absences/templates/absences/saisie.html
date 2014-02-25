@@ -1,0 +1,40 @@
+{% extends 'general.html' %}
+
+{% block title %}Saisie des absences{% endblock %}
+
+{% block content %}
+
+<h2>Saisie des absences pour le cours {{cours.matiere.intitule}}</h2>
+
+<div>
+	<p>
+		Le {{cours.dateDebut|date:"d/m/Y"}} de {{cours.dateDebut|time:"H:i"}} à {{cours.dateFin|time:"H:i"}}
+		au groupe {{cours.donne_a.nom}}
+	</p>
+</div>
+
+<div class="alert alert-info">
+	<p>
+		<strong>Info - </strong>
+		Sélectionnez les étudiants absents et cliquez sur "Envoyer"
+	</p>	
+</div>
+<h3>Etudiants du groupe {{cours.donne_a.nom}}</h3>
+<div>
+	<form action="" method="post" class="form-horizontal">
+	{% csrf_token %}
+	{% for etudiant in cours.donne_a.etudiants.all %}
+
+	<div class="checkbox">
+		<label>
+			<input type="checkbox" name="etudiants" value="{{etudiant.id}}">
+			{{etudiant.user.first_name}} {{etudiant.user.last_name}}
+		</label>
+	</div>
+
+	{% endfor %}
+	<input type="hidden" value="{{cours.id}}" name="coursId" />
+	<button type="submit" class="btn btn-primary">Envoyer</button>
+</form>
+</div>
+{% endblock %}
