@@ -28,13 +28,12 @@ def connexion(request):
 			user = authenticate(username=identifiant, password=motDePasse)
 			if user:
 				login(request, user)
-
 				return redirect(reverse('absences:index'))
 			else:
 				error = True
 	else:
 		form = ConnexionForm()
-	return render(request, 'absences/connexion.html', locals())
+	return render(request, 'absences/connexion.html', {'form':form})
 
 # Permet la déconnexion
 def deconnexion(request):
@@ -72,6 +71,7 @@ class CoursListViewJour (CoursListView):
 		dateDebut = datetime(int(self.args[0]), int(self.args[1]), int(self.args[2]), 0, 0, 0)
 		dateFin = datetime(int(self.args[0]), int(self.args[1]), int(self.args[2]), 23, 59, 59)
 		return Cours.objects.filter(dateDebut__gte = dateDebut, dateFin__lte = dateFin)
+
 @login_required
 def consultationCours(request, cours_id):
 	return HttpResponse("consultation du cours " + cours_id)
