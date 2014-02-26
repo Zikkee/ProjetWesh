@@ -16,7 +16,8 @@
 				{{enseignant.user.first_name}} {{enseignant.user.last_name}}
 				{% if not forloop.last %}, {%endif%}
 			{% endfor %}
-			au groupe {{cours.donne_a}}
+			au groupe
+			{% for groupe in cours.donne_a.all %} {{groupe.nom}}{% if not forloop.last %}, {%endif%}{% endfor %}
 		</em></p>
 	</div>
 

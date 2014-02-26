@@ -19,19 +19,21 @@
 		Sélectionnez les étudiants absents et cliquez sur "Envoyer"
 	</p>	
 </div>
-<h3>Etudiants du groupe {{cours.donne_a.nom}}</h3>
 <div>
 	<form action="" method="post" class="form-horizontal">
 	{% csrf_token %}
-	{% for etudiant in cours.donne_a.etudiants.all %}
+	{% for groupe in cours.donne_a.all %}
+		<h3>Etudiants du groupe {{groupe.nom}}</h3>
 
-	<div class="checkbox">
-		<label>
-			<input type="checkbox" name="etudiants" value="{{etudiant.id}}">
-			{{etudiant.user.first_name}} {{etudiant.user.last_name}}
-		</label>
-	</div>
+			{% for etudiant in groupe.etudiants.all %}
 
+			<div class="checkbox">
+				<label>
+					<input type="checkbox" name="etudiants" value="{{etudiant.id}}">
+					{{etudiant.user.first_name}} {{etudiant.user.last_name}}
+				</label>
+			</div>
+			{% endfor %}
 	{% endfor %}
 	<input type="hidden" value="{{cours.id}}" name="coursId" />
 	<button type="submit" class="btn btn-primary">Envoyer</button>

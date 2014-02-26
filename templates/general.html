@@ -29,11 +29,22 @@
 	<!-- Fin barre de navigation -->
 
 	<h1>Gestion des absences <small>Polytech Nantes</small></h1>
-
-	{% if success %}
-		<div class="alert alert-success">
-			{{success}}
-		</div>
+	
+	{% if messages %}
+			{% for message in messages %}
+				{% if message.tags == 'error' %}
+				<div class="alert alert-danger">
+						<p><span class="glyphicon glyphicon-exclamation-sign"></span>
+					{{message}}</p>
+				</div>
+				{% elif message.tags == 'success' %}
+				<div class="alert alert-success">
+						<p><span class="glyphicon glyphicon-ok"></span>
+					{{message}}</p>
+				</div>
+				{% endif %}
+			{% endfor %}
+		</ul>
 	{% endif %}
 
 	<div id="content">

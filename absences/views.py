@@ -1,11 +1,12 @@
 #-*- coding: utf-8 -*-
 
 from django.shortcuts import render, redirect, get_object_or_404
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.views.generic.list import ListView
 from django.contrib.auth import authenticate, login, logout	
 from django.core.urlresolvers import reverse
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib import messages
 
 from absences.models import Cours, Absence
 from absences.forms import ConnexionForm
@@ -79,9 +80,9 @@ def consultationCours(request, cours_id):
 
 	return render(request, 'absences/consultationCours.html', {'cours':cours, 'absences':absences})
 
+@permission_required('absences.add_absence')
 def saisieAbsences(request, cours_id):
 	cours = get_object_or_404(Cours, pk=cours_id)
-	success = False
 	etudiants = []
 
 	#Si la saisie a déjà été effectuée pour ce cours, on redirige vers l'index
@@ -91,10 +92,13 @@ def saisieAbsences(request, cours_id):
 			for etudiant in etudiants:
 				absence = Absence(etudiant_id=etudiant, cours_id=cours_id)
 				absence.save()
-				cours.saisieEffectuee = True
-				cours.save()
-			saved = 'Les étudiants absents ont bien été enregistrés.'
+			cours.saisieEffectuee = True
+			cours.save()
+
+			messages.success(request, 'Les étudiants absents ont bien été enregistrés.')
+			return redirect('absences:index')
 	else:
+		messages.error(request, 'La saisie pour ce cours a déjà été effectuée.')
 		return redirect(reverse('absences:index'))
 
-	return render(request, 'absences/saisie.html', {'cours':cours, 'etudiants':etudiants, 'success':success})
+	return render(request, 'absences/saisie.html', {'cours':cours, 'etudiants':etudiants})
