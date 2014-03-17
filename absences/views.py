@@ -9,6 +9,7 @@ from django.contrib.auth.decorators import login_required
 
 from absences.models import Cours, Absence
 from absences.forms import ConnexionForm
+from absences.models import Etudiant
 
 from datetime import datetime
 from calendar import monthrange
@@ -78,3 +79,15 @@ def consultationCours(request, cours_id):
 	absences = Absence.objects.filter(cours_id = cours_id)
 
 	return render(request, 'absences/consultationCours.html', {'cours':cours, 'absences':absences})
+
+def listeEleve(request):
+	listeEleve = Etudiant.objects.all()
+	context = {'listeEleve': listeEleve}
+	return render(request, 'absences/listeEleve.html', context)
+    
+def infosEleve(request, idEleve):
+	try:
+		eleve = Etudiant.objects.get(id=idEleve)
+	except Etudiant.DoesNotExist:
+		raise Http404
+	return render(request, 'absences/infosEleve.html', {'eleve': eleve})

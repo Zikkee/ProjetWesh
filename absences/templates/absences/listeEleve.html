@@ -1,0 +1,9 @@
+{% if listeEleve %}
+    <ul>
+    {% for eleve in listeEleve %}
+        <li><a href="/absences/eleves/liste/{{ eleve.id }}/">{{eleve.user}}</a></li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No polls are available.</p>
+{% endif %}
