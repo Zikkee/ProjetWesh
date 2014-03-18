@@ -79,21 +79,18 @@ def consultationCours(request, cours_id):
 
 	return render(request, 'absences/consultationCours.html', {'cours':cours, 'absences':absences})
 
+@login_required
 def listeEleve(request):
 	listeEleve = Etudiant.objects.all()
 	context = {'listeEleve': listeEleve}
 	return render(request, 'absences/listeEleve.html', context)
-    
+
+@login_required
 def infosEleve(request, idEleve):
-	try:
-		eleve = Etudiant.objects.get(id=idEleve)
-	except Etudiant.DoesNotExist:
-		raise Http404
+	eleve = get_object_or_404(Etudiant, id=idEleve)
 	return render(request, 'absences/infosEleve.html', {'eleve': eleve})
 
+@login_required
 def infosPromotion(request, idPromotion):
-	try:
-		promotion = Promotion.objects.get(id=idPromotion)
-	except Promotion.DoesNotExist:
-		raise Http404
+	promotion = get_object_or_404(Promotion, id=idPromotion)
 	return render(request, 'absences/infosPromotion.html', {'promotion': promotion})
