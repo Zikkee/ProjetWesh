@@ -83,7 +83,7 @@ def consultationCours(request, cours_id):
 @permission_required('absences.add_absence')
 def saisieAbsences(request, cours_id):
 	cours = get_object_or_404(Cours, pk=cours_id)
-	etudiants = []
+	etudiants = [] 
 
 	#Si la saisie a déjà été effectuée pour ce cours, on redirige vers l'index
 	if not cours.saisieEffectuee:
