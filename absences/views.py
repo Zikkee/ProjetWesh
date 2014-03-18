@@ -7,9 +7,10 @@ from django.contrib.auth import authenticate, login, logout
 from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib import messages
+from django.contrib.auth.models import User
 
-from absences.models import Cours, Absence
-from absences.forms import ConnexionForm
+from absences.models import Cours, Absence, Justificatif
+from absences.forms import ConnexionForm, JustificatifForm
 
 from datetime import datetime
 from calendar import monthrange
@@ -102,3 +103,43 @@ def saisieAbsences(request, cours_id):
 		return redirect(reverse('absences:index'))
 
 	return render(request, 'absences/saisie.html', {'cours':cours, 'etudiants':etudiants})
+
+def ajouterJustificatif(request, absence_id):
+	absence = get_object_or_404(Absence, pk=absence_id)
+	cours = absence.cours 
+
+	error = False
+	if request.method == 'POST':
+		form = JustificatifForm(request.POST)
+
+		if form.is_valid():
+			raison = form.cleaned_data['raison']
+			justificatif = Justificatif(genre=raison, dateDebut="2014-02-02", dateFin="2014-02-02")
+			justificatif.save()
+
+			absence.justifie = True
+			absence.justificatif = justificatif
+			absence.save()
+			
+	else:
+		form = JustificatifForm()
+
+	return render(request, 'absences/ajouterJustificatif.html',{'absence':absence, 'form':form})
+
+def ajouterJustificatifMultiple(request):
+	"""Aouter un justificatif pour plusieurs cours"""
+
+	if request.method == "POST":
+		form = JustificatifMultipleForm(request.POST)
+
+		if form.is_valid:
+			etudiant = form.cleaned_data['etudiant']
+			dateDebut = form.cleaned_data['dateDebut']
+			dateFin = form.cleaned_data['dateFin']
+			raison = form.cleaned_data['raison']
+			cours = form.cleaned_data['cours']
+			
+		else:
+			form = JustificatifMultipleForm()
+
+	return render(request, 'absences/ajouterJustificatifMultiple.html')
