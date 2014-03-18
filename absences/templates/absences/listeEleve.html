@@ -15,7 +15,7 @@
 					<a href="/absences/eleves/liste/{{ eleve.id }}/">{{eleve.user}}</a>
 				</td>
 				<td>
-					<a href="#">{{eleve.promotion}}</a>
+					<a href="{% url 'absences:infosPromotion' eleve.promotion.id %}">{{eleve.promotion}}</a>
 				</td>
 			</tr>
 		{% endfor %}

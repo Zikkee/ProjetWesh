@@ -12,5 +12,6 @@ urlpatterns = patterns('',
 	url(r'^cours/liste/(\d{4})/(\d{2})/(\d{2})/$', views.CoursListViewJour.as_view(), name='listeCoursJour'),
 	url(r'^cours/(?P<cours_id>\d+)/$', views.consultationCours, name='consultationCours'),
 	url(r'^eleves/$', views.listeEleve, name='listeEleve'),
-    url(r'^eleves/liste/(?P<idEleve>\d+)/$', views.infosEleve, name='infosEleve')
+	url(r'^eleves/liste/(?P<idEleve>\d+)/$', views.infosEleve, name='infosEleve'),
+	url(r'^promotions/(?P<idPromotion>\d+)/$', views.infosPromotion, name='infosPromotion')
 )

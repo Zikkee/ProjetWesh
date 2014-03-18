@@ -1,0 +1,11 @@
+{% extends 'general.html' %}
+
+
+{%block content %}
+	{% if promotion %}
+		<h2>Promotion {{promotion}}</h2>
+		<p>Responsable : {{promotion.responsable}}</p>
+	{% else %}
+		<p>Cette promotion n'existe pas !</p>
+	{% endif %}
+{%endblock %}

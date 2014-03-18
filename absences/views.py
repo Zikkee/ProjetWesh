@@ -7,9 +7,8 @@ from django.contrib.auth import authenticate, login, logout
 from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required
 
-from absences.models import Cours, Absence
+from absences.models import Cours, Absence, Etudiant, Promotion
 from absences.forms import ConnexionForm
-from absences.models import Etudiant
 
 from datetime import datetime
 from calendar import monthrange
@@ -91,3 +90,10 @@ def infosEleve(request, idEleve):
 	except Etudiant.DoesNotExist:
 		raise Http404
 	return render(request, 'absences/infosEleve.html', {'eleve': eleve})
+
+def infosPromotion(request, idPromotion):
+	try:
+		promotion = Promotion.objects.get(id=idPromotion)
+	except Promotion.DoesNotExist:
+		raise Http404
+	return render(request, 'absences/infosPromotion.html', {'promotion': promotion})
