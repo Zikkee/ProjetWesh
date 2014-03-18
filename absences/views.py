@@ -1,11 +1,12 @@
 #-*- coding: utf-8 -*-
 
 from django.shortcuts import render, redirect, get_object_or_404
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.views.generic.list import ListView
 from django.contrib.auth import authenticate, login, logout	
 from django.core.urlresolvers import reverse
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib import messages
 
 from absences.models import Cours, Absence, Etudiant, Promotion
 from absences.forms import ConnexionForm
@@ -78,20 +79,3 @@ def consultationCours(request, cours_id):
 	absences = Absence.objects.filter(cours_id = cours_id)
 
 	return render(request, 'absences/consultationCours.html', {'cours':cours, 'absences':absences})
-
-@login_required
-def listeEleve(request):
-	listeEleve = Etudiant.objects.all()
-	context = {'listeEleve': listeEleve}
-	return render(request, 'absences/listeEleve.html', context)
-
-@login_required
-def infosEleve(request, idEleve):
-	eleve = get_object_or_404(Etudiant, id=idEleve)
-	absences = Absence.objects.filter(etudiant=eleve)
-	return render(request, 'absences/infosEleve.html', {'eleve': eleve, 'absences':absences})
-
-@login_required
-def infosPromotion(request, idPromotion):
-	promotion = get_object_or_404(Promotion, id=idPromotion)
-	return render(request, 'absences/infosPromotion.html', {'promotion': promotion})

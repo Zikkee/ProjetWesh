@@ -43,7 +43,7 @@ class Cours (models.Model):
 	dateFin = models.DateTimeField(auto_now = True, auto_now_add = False)
 	saisieEffectuee = models.BooleanField(default = False)
 	matiere = models.ForeignKey(Matiere)
-	donne_a = models.ForeignKey(Groupe)
+	donne_a = models.ManyToManyField(Groupe, related_name='donne_a')
 	donne_par = models.ManyToManyField(Enseignant, related_name = 'donne_par')
 
 	def __unicode__(self):
