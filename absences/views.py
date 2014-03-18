@@ -79,3 +79,26 @@ def consultationCours(request, cours_id):
 	absences = Absence.objects.filter(cours_id = cours_id)
 
 	return render(request, 'absences/consultationCours.html', {'cours':cours, 'absences':absences})
+
+@permission_required('absences.add_absence')
+def saisieAbsences(request, cours_id):
+	cours = get_object_or_404(Cours, pk=cours_id)
+	etudiants = [] 
+
+	#Si la saisie a déjà été effectuée pour ce cours, on redirige vers l'index
+	if not cours.saisieEffectuee:
+		if request.method == 'POST':
+			etudiants = request.POST.getlist('etudiants') #ids des étudiants sélectionnés
+			for etudiant in etudiants:
+				absence = Absence(etudiant_id=etudiant, cours_id=cours_id)
+				absence.save()
+			cours.saisieEffectuee = True
+			cours.save()
+
+			messages.success(request, 'Les étudiants absents ont bien été enregistrés.')
+			return redirect('absences:index')
+	else:
+		messages.error(request, 'La saisie pour ce cours a déjà été effectuée.')
+		return redirect(reverse('absences:index'))
+
+	return render(request, 'absences/saisie.html', {'cours':cours, 'etudiants':etudiants})
