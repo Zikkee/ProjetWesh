@@ -1,6 +1,10 @@
-{% if eleve %}
-    <p>Informations sur l'élève {{eleve.user}}.</p>
-{% else %}
-    <p>Cet élève n'existe pas !</p>
-{% endif %}
+{% extends 'general.html' %}
 
+
+{%block content %}
+	{% if eleve %}
+		<p>Informations sur l'élève {{eleve.user}}.</p>
+	{% else %}
+		<p>Cet élève n'existe pas !</p>
+	{% endif %}
+{%endblock %}

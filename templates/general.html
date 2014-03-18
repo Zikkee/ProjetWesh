@@ -17,6 +17,7 @@
 					{% endif %}
 					<li><a href="{% url 'absences:index' %}">Acceuil</a></li>
 					<li><a href="{% url 'absences:listeCours'%} ">Cours</a></li>
+					<li><a href="{% url 'absences:listeEleve'%} ">Élèves</a></li>
 					{% if user.is_authenticated %}
 					<li><a href="{% url 'absences:deconnexion' %}" title="Deconnexion">Déconnexion</a></li>
 					{% else %}
@@ -27,7 +28,7 @@
 		</div>
 	</nav>
 	<!-- Fin barre de navigation -->
-
+	
 	<h1>Gestion des absences <small>Polytech Nantes</small></h1>
 
 	{% block content %}
