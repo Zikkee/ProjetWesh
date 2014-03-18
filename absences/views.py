@@ -88,7 +88,8 @@ def listeEleve(request):
 @login_required
 def infosEleve(request, idEleve):
 	eleve = get_object_or_404(Etudiant, id=idEleve)
-	return render(request, 'absences/infosEleve.html', {'eleve': eleve})
+	absences = Absence.objects.filter(etudiant=eleve)
+	return render(request, 'absences/infosEleve.html', {'eleve': eleve, 'absences':absences})
 
 @login_required
 def infosPromotion(request, idPromotion):
