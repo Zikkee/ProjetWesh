@@ -102,3 +102,21 @@ def saisieAbsences(request, cours_id):
 		return redirect(reverse('absences:index'))
 
 	return render(request, 'absences/saisie.html', {'cours':cours, 'etudiants':etudiants})
+	
+@login_required
+def listeEleve(request):
+	listeEleve = Etudiant.objects.all()
+	context = {'listeEleve': listeEleve}
+	return render(request, 'absences/listeEleve.html', context)
+
+@login_required
+
+def infosEleve(request, idEleve):
+	eleve = get_object_or_404(Etudiant, id=idEleve)
+	absences = Absence.objects.filter(etudiant=eleve)
+	return render(request, 'absences/infosEleve.html', {'eleve': eleve, 'absences':absences})
+
+@login_required
+def infosPromotion(request, idPromotion):
+	promotion = get_object_or_404(Promotion, id=idPromotion)
+	return render(request, 'absences/infosPromotion.html', {'promotion': promotion})
