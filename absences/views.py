@@ -7,9 +7,10 @@ from django.contrib.auth import authenticate, login, logout
 from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib import messages
+from django.contrib.auth.models import User
 
-from absences.models import Cours, Absence, Etudiant, Promotion
-from absences.forms import ConnexionForm
+from absences.models import Cours, Absence, Etudiant, Promotion, Justificatif
+from absences.forms import ConnexionForm, JustificatifForm
 
 from datetime import datetime
 from calendar import monthrange
@@ -29,6 +30,7 @@ def connexion(request):
 			user = authenticate(username=identifiant, password=motDePasse)
 			if user:
 				login(request, user)
+				messages.success(request, 'Vous êtes bien connecté !')
 				return redirect(reverse('absences:index'))
 			else:
 				error = True
@@ -83,7 +85,7 @@ def consultationCours(request, cours_id):
 @permission_required('absences.add_absence')
 def saisieAbsences(request, cours_id):
 	cours = get_object_or_404(Cours, pk=cours_id)
-	etudiants = [] 
+	etudiants = []
 
 	#Si la saisie a déjà été effectuée pour ce cours, on redirige vers l'index
 	if not cours.saisieEffectuee:
@@ -96,7 +98,7 @@ def saisieAbsences(request, cours_id):
 			cours.save()
 
 			messages.success(request, 'Les étudiants absents ont bien été enregistrés.')
-			return redirect('absences:index')
+			return redirect('absences:consultationCours', cours_id=cours_id)
 	else:
 		messages.error(request, 'La saisie pour ce cours a déjà été effectuée.')
 		return redirect(reverse('absences:index'))
@@ -120,3 +122,45 @@ def infosEleve(request, idEleve):
 def infosPromotion(request, idPromotion):
 	promotion = get_object_or_404(Promotion, id=idPromotion)
 	return render(request, 'absences/infosPromotion.html', {'promotion': promotion})
+
+def ajouterJustificatif(request, absence_id):
+	absence = get_object_or_404(Absence, pk=absence_id)
+	cours = absence.cours 
+
+	error = False
+	if request.method == 'POST':
+		form = JustificatifForm(request.POST)
+
+		if form.is_valid():
+			raison = form.cleaned_data['raison']
+			justificatif = Justificatif(genre=raison, dateDebut=cours.dateDebut, dateFin=cours.dateFin)
+			justificatif.save()
+
+			absence.justifie = True
+			absence.justificatif = justificatif
+			absence.save()
+			messages.success(request, 'Le justification a bien été ajouté.')
+			return redirect('absences:consultationCours', cours_id=cours.id)
+			
+	else:
+		form = JustificatifForm()
+
+	return render(request, 'absences/ajouterJustificatif.html',{'absence':absence, 'form':form})
+
+def ajouterJustificatifMultiple(request):
+	"""Aouter un justificatif pour plusieurs cours"""
+
+	if request.method == "POST":
+		form = JustificatifMultipleForm(request.POST)
+
+		if form.is_valid:
+			etudiant = form.cleaned_data['etudiant']
+			dateDebut = form.cleaned_data['dateDebut']
+			dateFin = form.cleaned_data['dateFin']
+			raison = form.cleaned_data['raison']
+			cours = form.cleaned_data['cours']
+			
+		else:
+			form = JustificatifMultipleForm()
+
+	return render(request, 'absences/ajouterJustificatifMultiple.html')
