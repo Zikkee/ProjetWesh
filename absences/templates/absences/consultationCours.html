@@ -62,7 +62,7 @@
 				<td>
 					{% if not absence.justifie %}
 						{% if perms.absences.can_ajouterJustificatif %}
-							<a href="#" class="btn btn-primary btn-sm" role="button">Ajouter un justificatif</a></td>
+							<a href="{% url 'absences:ajouteJustificatif' absence.id %}" class="btn btn-primary btn-sm" role="button">Ajouter un justificatif</a></td>
 						{% else %}
 						- 
 						{%endif%}

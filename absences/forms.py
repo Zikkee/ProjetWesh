@@ -12,8 +12,8 @@ class JustificatifForm(forms.Form):
 	# matiere = forms.CharField(label='Matière', max_length=30)
 
 class JustificatifMultipleForm(forms.Form):
-	etudiant = forms.Select(label="Etudiant")
-	matieres = forms.SelectMultiple(labels="Matières")
+	# etudiant = forms.Select(label="Etudiant")
+	# matieres = forms.SelectMultiple(label="Matières")
 	dateDebut = forms.DateField(label='Date début effet')
 	dateFin = forms.DateField(label='Date fin effet')
 	raison = forms.CharField(label="Raison", max_length=100)

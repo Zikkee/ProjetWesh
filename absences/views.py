@@ -30,6 +30,7 @@ def connexion(request):
 			user = authenticate(username=identifiant, password=motDePasse)
 			if user:
 				login(request, user)
+				messages.success(request, 'Vous êtes bien connecté !')
 				return redirect(reverse('absences:index'))
 			else:
 				error = True
@@ -97,7 +98,7 @@ def saisieAbsences(request, cours_id):
 			cours.save()
 
 			messages.success(request, 'Les étudiants absents ont bien été enregistrés.')
-			return redirect('absences:index')
+			return redirect('absences:consultationCours', cours_id=cours_id)
 	else:
 		messages.error(request, 'La saisie pour ce cours a déjà été effectuée.')
 		return redirect(reverse('absences:index'))
@@ -114,12 +115,14 @@ def ajouterJustificatif(request, absence_id):
 
 		if form.is_valid():
 			raison = form.cleaned_data['raison']
-			justificatif = Justificatif(genre=raison, dateDebut="2014-02-02", dateFin="2014-02-02")
+			justificatif = Justificatif(genre=raison, dateDebut=cours.dateDebut, dateFin=cours.dateFin)
 			justificatif.save()
 
 			absence.justifie = True
 			absence.justificatif = justificatif
 			absence.save()
+			messages.success(request, 'Le justification a bien été ajouté.')
+			return redirect('absences:consultationCours', cours_id=cours.id)
 			
 	else:
 		form = JustificatifForm()
