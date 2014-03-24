@@ -1,5 +1,6 @@
 #-*- coding: utf-8 -*-
 from django import forms
+from absences.models import Etudiant, Matiere
 
 class ConnexionForm(forms.Form):
 	identifiant = forms.CharField(label='Identifiant', max_length=30)
@@ -12,8 +13,8 @@ class JustificatifForm(forms.Form):
 	# matiere = forms.CharField(label='Matière', max_length=30)
 
 class JustificatifMultipleForm(forms.Form):
-	# etudiant = forms.Select(label="Etudiant")
-	# matieres = forms.SelectMultiple(label="Matières")
-	dateDebut = forms.DateField(label='Date début effet')
-	dateFin = forms.DateField(label='Date fin effet')
+	etudiant = forms.ChoiceField(choices=[(e.user.id, e.user.first_name) for e in Etudiant.objects.all()])
+	matieres = forms.MultipleChoiceField(choices=[(m.id, m.intitule) for m in Matiere.objects.all()])
+	dateDebut = forms.DateTimeField(label='Date début effet')
+	dateFin = forms.DateTimeField(label='Date fin effet')
 	raison = forms.CharField(label="Raison", max_length=100)
