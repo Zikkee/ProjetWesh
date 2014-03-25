@@ -13,5 +13,5 @@ urlpatterns = patterns('',
 	url(r'^cours/(?P<cours_id>\d+)/$', views.consultationCours, name='consultationCours'),
 	url(r'^cours/(?P<cours_id>\d+)/saisie/$', views.saisieAbsences, name='saisieAbsences'),
 	url(r'^justificatif/ajouter/(?P<absence_id>\d+)/$', views.ajouterJustificatif, name="ajouteJustificatif"),
-	url(r'^justificatif/ajouter/$', views.ajouterMultipleJustificatif, name="ajouterMultipleJustificati"),
+	url(r'^justificatif/ajouter/$', views.ajouterMultipleJustificatif, name="ajouterMultipleJustificatif"),
 )

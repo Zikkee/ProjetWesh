@@ -48,13 +48,19 @@
 				{% endfor %}
 			</ul>
 		{% endif %}
-
 		<div class="row">
 			<div class="col-md-2">
 				<ul class="nav nav-pills nav-stacked">
 				  	<li class="active"><a href="{% url 'absences:index' %}">Accueil</a></li>
-					<li><a href="#">Mes absences</a></li>
+					{% if estEtudiant %}
+						<li><a href="#">Mes absences <span class="badge pull-right">{{nbAbsencesNonJustifiees}}</span></a></li>
+					{% endif %}
+					{% if estSecretaire or estEnseignant %}
 					<li><a href="{% url 'absences:listeCours' %}">Liste des cours</a></li>
+					{% endif %}
+					{% if estSecretaire %}
+					<li><a href="{% url 'absences:ajouterMultipleJustificatif' %}">Ajouter justificatif</a></li>
+					{% endif %}
 				</ul>
 			</div>
 	 		<div class="col-md-10">
