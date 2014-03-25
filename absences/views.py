@@ -9,8 +9,8 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib import messages
 from django.contrib.auth.models import User
 
-from absences.models import Cours, Absence, Justificatif
-from absences.forms import ConnexionForm, JustificatifForm
+from absences.models import Cours, Absence, Justificatif, Etudiant
+from absences.forms import ConnexionForm, JustificatifForm, JustificatifMultipleForm
 
 from datetime import datetime
 from calendar import monthrange
