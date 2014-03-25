@@ -53,18 +53,23 @@
 			<div class="col-md-2">
 				<ul class="nav nav-pills nav-stacked">
 				  	<li class="active"><a href="{% url 'absences:index' %}">Accueil</a></li>
-					<li><a href="#">Mes absences</a></li>
+					{% if estEtudiant %}
+						<li><a href="#">Mes absences <span class="badge pull-right">{{nbAbsencesNonJustifiees}}</span></a></li>
+					{% endif %}
+					{% if estSecretaire or estEnseignant %}
 					<li><a href="{% url 'absences:listeCours' %}">Liste des cours</a></li>
 					<li><a href="{% url 'absences:listeEleve' %}">Liste des élèves</a></li>
+					{% endif %}
+					{% if estSecretaire %}
+					<li><a href="{% url 'absences:ajouterMultipleJustificatif' %}">Ajouter justificatif</a></li>
+					{% endif %}
 				</ul>
 			</div>
 	 		<div class="col-md-10">
 				{% block content %}	{% endblock %}
 	 		</div>
 		</div>
-	</nav>
-	<!-- Fin barre de navigation -->
-
+	</div>
 	<script src="{% static 'js/jquery.min.js' %}" type="text/javascript"></script>
 	<script src="{% static 'js/bootstrap.min.js' %}" type="text/javascript"></script>
 	<script src="{% static 'js/scripts.js' %}" type="text/javascript"></script>

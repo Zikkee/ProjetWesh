@@ -61,6 +61,7 @@ class Justificatif (models.Model):
 	dateDebut = models.DateTimeField(auto_now = False, auto_now_add = False)
 	dateFin = models.DateTimeField(auto_now = False, auto_now_add = False)
 	matiere = models.ManyToManyField(Matiere, related_name = 'vaut_pour_la_matiere')
+	user = models.ForeignKey(Etudiant, related_name = 'valable_pour')
 	
 	class Meta:
 		permissions = (

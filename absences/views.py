@@ -9,11 +9,18 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib import messages
 from django.contrib.auth.models import User
 
-from absences.models import Cours, Absence, Etudiant, Promotion, Justificatif
+from absences.models import Cours, Absence, Justificatif
 from absences.forms import ConnexionForm, JustificatifForm
 
 from datetime import datetime
 from calendar import monthrange
+
+
+#DEBUG 
+
+
+import pdb
+
 
 def index(request):
 	return render(request, 'absences/index.html')
@@ -94,6 +101,17 @@ def saisieAbsences(request, cours_id):
 			for etudiant in etudiants:
 				absence = Absence(etudiant_id=etudiant, cours_id=cours_id)
 				absence.save()
+
+				# vérifier s'il existe un justificatif qui prend en compte la date
+				justificatifs = Justificatif.objects.filter(matiere = absence.cours.matiere.id, user = etudiant)
+				
+				# is la date du justif correspond à celle de l'absence, on justifie
+				for justificatif in justificatifs:
+					if ((absence.cours.dateDebut <= justificatif.dateDebut and absence.cours.dateFin <= justificatif.dateFin) or (absence.cours.dateDebut >= justificatif.dateDebut and absence.cours.dateFin >= justificatif.dateFin) or (absence.cours.dateDebut <= justificatif.dateDebut and absence.cours.dateFin >= justificatif.dateFin) or (absence.cours.dateDebut >= justificatif.dateDebut and absence.cours.dateFin <= justificatif.dateFin)):
+						absence.justifie = True
+						absence.justificatif = justificatif
+						absence.save()
+
 			cours.saisieEffectuee = True
 			cours.save()
 
@@ -133,7 +151,7 @@ def ajouterJustificatif(request, absence_id):
 
 		if form.is_valid():
 			raison = form.cleaned_data['raison']
-			justificatif = Justificatif(genre=raison, dateDebut=cours.dateDebut, dateFin=cours.dateFin)
+			justificatif = Justificatif(genre=raison, dateDebut=cours.dateDebut, dateFin=cours.dateFin, user = absence.etudiant)
 			justificatif.save()
 
 			absence.justifie = True
@@ -147,21 +165,41 @@ def ajouterJustificatif(request, absence_id):
 
 	return render(request, 'absences/ajouterJustificatif.html',{'absence':absence, 'form':form})
 
-def ajouterJustificatifMultiple(request):
+def ajouterMultipleJustificatif(request):
 	"""Aouter un justificatif pour plusieurs cours"""
+	form = None
 
 	if request.method == "POST":
 		form = JustificatifMultipleForm(request.POST)
 
-		if form.is_valid:
-			etudiant = form.cleaned_data['etudiant']
+		if form.is_valid():
+			etudiantObject = Etudiant.objects.get(user=form.cleaned_data['etudiant'])
+			matieres = request.POST.getlist('matieres')
+			matieres = [int(m) for m in matieres]
 			dateDebut = form.cleaned_data['dateDebut']
 			dateFin = form.cleaned_data['dateFin']
 			raison = form.cleaned_data['raison']
-			cours = form.cleaned_data['cours']
-			
+
+			justificatif = Justificatif(genre=raison, dateDebut = dateDebut, dateFin = dateFin, user = etudiantObject)
+			justificatif.save()
+			justificatif.matiere.add(*matieres)
+			justificatif.save()
+
+			absences = Absence.objects.filter(etudiant_id = etudiantObject.id, justifie = False)
+			for absence in absences:
+				if ((absence.cours.dateDebut <= dateDebut and absence.cours.dateFin <= dateFin) or (absence.cours.dateDebut >= dateDebut and absence.cours.dateFin >= dateFin) or (absence.cours.dateDebut <= dateDebut and absence.cours.dateFin >= dateFin) or (absence.cours.dateDebut >= dateDebut and absence.cours.dateFin <= dateFin)) and (absence.cours.matiere.id in matieres):
+
+					absence.justifie = True
+					absence.justificatif = justificatif
+					absence.save()
+				
+			messages.success(request, 'Le justificatif a bien été ajouté pour {0}.'.format(etudiantObject))
+			return redirect('absences:listeCours')
+
 		else:
-			form = JustificatifMultipleForm()
+			form = JustificatifMultipleForm(request.POST)
+	else:
+		form = JustificatifMultipleForm()
 
 	return render(request, 'absences/ajouterJustificatifMultiple.html')
 	
