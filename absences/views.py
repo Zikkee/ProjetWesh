@@ -164,3 +164,9 @@ def ajouterJustificatifMultiple(request):
 			form = JustificatifMultipleForm()
 
 	return render(request, 'absences/ajouterJustificatifMultiple.html')
+	
+def obtenirJustificatif(request, idAbsence):
+	absence = get_object_or_404(Absence, id=idAbsence)
+	justificatif = absence.justificatif
+	
+	return HttpResponse(justificatif.genre)

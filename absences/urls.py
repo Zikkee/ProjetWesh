@@ -15,5 +15,6 @@ urlpatterns = patterns('',
 	url(r'^justificatif/ajouter/(?P<absence_id>\d+)/$', views.ajouterJustificatif, name="ajouteJustificatif"),
 	url(r'^eleves/$', views.listeEleve, name='listeEleve'),
 	url(r'^eleves/liste/(?P<idEleve>\d+)/$', views.infosEleve, name='infosEleve'),
-	url(r'^promotions/(?P<idPromotion>\d+)/$', views.infosPromotion, name='infosPromotion')
+	url(r'^promotions/(?P<idPromotion>\d+)/$', views.infosPromotion, name='infosPromotion'),
+	url(r'^obtenirJustificatif/(?P<idAbsence>\d+)/$', views.obtenirJustificatif, name='obtenirJustificatif')
 )
