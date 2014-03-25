@@ -13,7 +13,7 @@
 		{% for eleve in listeEleve %}
 			<tr>
 				<td>
-					<a href="/absences/eleves/liste/{{ eleve.id }}/">{{eleve.user}}</a>
+					<a href="/absences/eleves/liste/{{ eleve.id }}/">{{eleve.user.first_name}} {{eleve.user.last_name}}</a>
 				</td>
 				<td>
 					<a href="{% url 'absences:infosPromotion' eleve.promotion.id %}">{{eleve.promotion}}</a>
