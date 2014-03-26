@@ -9,7 +9,7 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib import messages
 from django.contrib.auth.models import User
 
-from absences.models import Cours, Absence, Justificatif, Etudiant
+from absences.models import Cours, Absence, Justificatif, Etudiant, Groupe
 from absences.forms import ConnexionForm, JustificatifForm, JustificatifMultipleForm
 
 from datetime import datetime
@@ -167,7 +167,6 @@ def ajouterJustificatif(request, absence_id):
 
 def ajouterMultipleJustificatif(request):
 	"""Aouter un justificatif pour plusieurs cours"""
-
 	form = None
 
 	if request.method == "POST":
@@ -202,7 +201,7 @@ def ajouterMultipleJustificatif(request):
 	else:
 		form = JustificatifMultipleForm()
 
-	return render(request, 'absences/ajouterJustificatifMultiple.html', {'form':form})
+	return render(request, 'absences/ajouterJustificatifMultiple.html')
 	
 def obtenirJustificatif(request, idAbsence):
 	absence = get_object_or_404(Absence, id=idAbsence)

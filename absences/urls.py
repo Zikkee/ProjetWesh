@@ -12,10 +12,10 @@ urlpatterns = patterns('',
 	url(r'^cours/liste/(\d{4})/(\d{2})/(\d{2})/$', views.CoursListViewJour.as_view(), name='listeCoursJour'),
 	url(r'^cours/(?P<cours_id>\d+)/$', views.consultationCours, name='consultationCours'),
 	url(r'^cours/(?P<cours_id>\d+)/saisie/$', views.saisieAbsences, name='saisieAbsences'),
-	url(r'^justificatif/ajouter/(?P<absence_id>\d+)/$', views.ajouterJustificatif, name="ajouteJustificatif"),
+	url(r'^justificatif/ajouter/(?P<absence_id>\d+)/(?P<page_precedente>[a-zA-Z]+)/(?P<id_precedent>\d+)/$', views.ajouterJustificatif, name="ajouteJustificatif"),
 	url(r'^justificatif/ajouter/$', views.ajouterMultipleJustificatif, name="ajouterMultipleJustificatif"),	
 	url(r'^eleves/$', views.listeEleve, name='listeEleve'),
-	url(r'^eleves/liste/(?P<idEleve>\d+)/$', views.infosEleve, name='infosEleve'),
+	url(r'^eleves/(?P<idEleve>\d+)/$', views.infosEleve, name='infosEleve'),
 	url(r'^promotions/(?P<idPromotion>\d+)/$', views.infosPromotion, name='infosPromotion'),
 	url(r'^obtenirJustificatif/(?P<idAbsence>\d+)/$', views.obtenirJustificatif, name='obtenirJustificatif')
 )
