@@ -9,7 +9,7 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib import messages
 from django.contrib.auth.models import User
 
-from absences.models import Cours, Absence, Justificatif, Etudiant
+from absences.models import Cours, Absence, Justificatif, Etudiant, Groupe
 from absences.forms import ConnexionForm, JustificatifForm, JustificatifMultipleForm
 
 from datetime import datetime
@@ -126,7 +126,8 @@ def saisieAbsences(request, cours_id):
 @login_required
 def listeEleve(request):
 	listeEleve = Etudiant.objects.all()
-	context = {'listeEleve': listeEleve}
+	listeGroupe = Groupe.objects.all()
+	context = {'listeEleve': listeEleve, 'listeGroupe': listeGroupe}
 	return render(request, 'absences/listeEleve.html', context)
 
 @login_required
@@ -141,7 +142,7 @@ def infosPromotion(request, idPromotion):
 	promotion = get_object_or_404(Promotion, id=idPromotion)
 	return render(request, 'absences/infosPromotion.html', {'promotion': promotion})
 
-def ajouterJustificatif(request, absence_id):
+def ajouterJustificatif(request, absence_id, page_precedente, id_precedent):
 	absence = get_object_or_404(Absence, pk=absence_id)
 	cours = absence.cours 
 
@@ -158,7 +159,7 @@ def ajouterJustificatif(request, absence_id):
 			absence.justificatif = justificatif
 			absence.save()
 			messages.success(request, 'Le justification a bien été ajouté.')
-			return redirect('absences:consultationCours', cours_id=cours.id)
+			return redirect('absences:'+page_precedente, id_precedent)
 			
 	else:
 		form = JustificatifForm()

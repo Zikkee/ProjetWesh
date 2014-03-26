@@ -3,7 +3,7 @@
 
 {%block content %}
 	{% if eleve %}
-		<h2>Informations sur l'élève {{eleve.user}}</h2>
+		<h2>Informations sur l'élève {{eleve.user.first_name}} {{eleve.user.last_name}}</h2>
 		<h3>Absences</h3>
 			{% if absences %}
 				<table class="table table-hover">
@@ -24,6 +24,17 @@
 							{% else %}
 								<td class="alert alert-danger">Non</td>
 							{% endif %}
+							<td>
+							{% if not abs.justifie %}
+								{% if perms.absences.can_ajouterJustificatif %}
+									<a href="{% url 'absences:ajouteJustificatif' abs.id 'infosEleve' eleve.id %}" class="btn btn-primary btn-sm" role="button">Ajouter un justificatif</a></td>
+								{% else %}
+									- 
+								{%endif%}
+							{% else %}
+								<a href="#" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#justificatifPopup" role="button" onclick="remplirPopupJustificatif({{abs.id}});">Voir le justificatif</a></td>
+							{% endif %}
+							</td>
 						</tr>
 					
 					{% endfor %}
@@ -35,4 +46,19 @@
 	{% else %}
 		<p>Cet élève n'existe pas !</p>
 	{% endif %}
+<div class="modal fade" id="justificatifPopup" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h4 class="modal-title" id="myModalLabel">Justificatif</h4>
+			</div>
+			<div class="modal-body">
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
+			</div>
+		</div>
+	</div>
+</div>
 {%endblock %}

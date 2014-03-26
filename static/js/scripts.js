@@ -6,7 +6,7 @@ function remplirPopupJustificatif(idAbsence) {
     "use strict";
     var justificatif;
     $.ajax({
-        url: '../../obtenirJustificatif/'+idAbsence,
+        url: '/obtenirJustificatif/'+idAbsence,
         success: function(data) {
             justificatif = data;
         },
