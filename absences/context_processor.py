@@ -1,4 +1,4 @@
-from absences.models import Absence, Etudiant
+from absences.models import Absence, Etudiant, Secretaire, Enseignant
 
 import pdb
 
@@ -11,22 +11,23 @@ def nbAbsencesNonJustifiees (request):
 	return {'nbAbsencesNonJustifiees':nb}
 
 def determinerGroupe(request):
-	estEtudiant = False
-	estSecretaire = False
-	estEnseignant = False
+	groupeUtilisateur = {}
+	groupeUtilisateur['etudiant'] = None
+	groupeUtilisateur['secretaire'] = None
+	groupeUtilisateur['enseignant'] = None
 
 	try:
 		groupes = request.user.groups.all()
 		for groupe in groupes:
 			if groupe.name == 'Etudiants':
-				estEtudiant = True
-			if groupe.name == 'Secretaires':
-				estSecretaire = True
-			if groupe.name == 'Enseignants':
-				estEnseignant = True
+				groupeUtilisateur['etudiant'] = Etudiant.objects.get(user=request.user.id)
+			elif groupe.name == 'Secretaires':
+				groupeUtilisateur['secretaire'] = Secretaire.objects.get(user=request.user.id)
+			elif groupe.name == 'Enseignants':
+				groupeUtilisateur['enseignant'] = Enseignant.objects.get(user=request.user.id)
 	except:
-		estEnseignant = False
-		estEtudiant = False
-		estSecretaire = False
+		groupeUtilisateur['etudiant'] = None
+		groupeUtilisateur['secretaire'] = None
+		groupeUtilisateur['enseignant'] = None
 
-	return {'estEtudiant':estEtudiant, 'estEnseignant':estEnseignant, 'estSecretaire':estSecretaire}
+	return {'groupeUtilisateur':groupeUtilisateur}
