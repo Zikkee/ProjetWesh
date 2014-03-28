@@ -9,7 +9,7 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib import messages
 from django.contrib.auth.models import User
 
-from absences.models import Cours, Absence, Justificatif, Etudiant, Groupe
+from absences.models import Cours, Absence, Justificatif, Etudiant, Groupe, Enseignant
 from absences.forms import ConnexionForm, JustificatifForm, JustificatifMultipleForm
 
 from datetime import datetime
@@ -81,6 +81,24 @@ class CoursListViewJour (CoursListView):
 		dateDebut = datetime(int(self.args[0]), int(self.args[1]), int(self.args[2]), 0, 0, 0)
 		dateFin = datetime(int(self.args[0]), int(self.args[1]), int(self.args[2]), 23, 59, 59)
 		return Cours.objects.filter(dateDebut__gte = dateDebut, dateFin__lte = dateFin)
+
+# class CoursListeEnseignant (CoursListView):
+# 	def get_queryset(self):
+# 		enseignant = None
+# 		# pdb.set_trace()
+# 		try:
+# 			enseignant = Enseignant.objects.get(user = request.user.id)
+# 		except:
+# 			enseignant = None
+
+# 		pdb.set_trace()
+# 		return Cours.objects.filter(dateFin__lte = datetime.now(), donne_par__id = enseignant)
+
+def mesCours(request):
+	enseignant = Enseignant.objects.get(user=request.user.id)
+	cours = Cours.objects.filter(dateFin__lte = datetime.now(), donne_par__id= enseignant.id, saisieEffectuee = False).order_by('-dateFin')
+
+	return render(request, 'absences/listeCours.html', {'listeCours':cours, 'nonRenseignes':True})
 
 @login_required
 def consultationCours(request, cours_id):
@@ -201,7 +219,7 @@ def ajouterMultipleJustificatif(request):
 	else:
 		form = JustificatifMultipleForm()
 
-	return render(request, 'absences/ajouterJustificatifMultiple.html')
+	return render(request, 'absences/ajouterJustificatifMultiple.html', {'form':form})
 	
 def obtenirJustificatif(request, idAbsence):
 	absence = get_object_or_404(Absence, id=idAbsence)

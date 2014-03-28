@@ -1,14 +1,26 @@
-from absences.models import Absence, Etudiant, Secretaire, Enseignant
+from absences.models import Absence, Etudiant, Secretaire, Enseignant, Cours
+from datetime import datetime
 
 import pdb
 
-def nbAbsencesNonJustifiees (request):
+def getNombres (request):
+	nb = {}
+	nb['absences'] = 0
+	nb['nonSaisis'] = 0
+
 	try:
-		etudiant = Etudiant.objects.get(user=request.user.id)
-		nb = Absence.objects.filter(etudiant_id = etudiant.id, justifie = False).count()
+		etudiant = Etudiant.objects.get(user=request.user)
+		nb['absences'] = Absence.objects.filter(etudiant = etudiant, justifie = False).count()
 	except:
-		nb = 0
-	return {'nbAbsencesNonJustifiees':nb}
+		nb['absences'] = 0
+		try:
+			enseignant = Enseignant.objects.get(user=request.user)
+			cours = Cours.objects.filter(donne_par = enseignant, saisieEffectuee = False, dateFin__lte = datetime.now())
+			nb['nonSaisis'] = cours.count()
+		except:
+			nb['nonSaisis'] = 0
+
+	return {'nb':nb}
 
 def determinerGroupe(request):
 	groupeUtilisateur = {}

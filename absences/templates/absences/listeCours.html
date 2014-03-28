@@ -2,11 +2,20 @@
 
 
 {% block title %}
-	Liste des cours 
+	Liste des cours
 {% endblock %}
 
 {%block content %}
 <h2>Liste des cours donnés</h2>
+
+{% if nonRenseignes %}
+	<div class="alert alert-info">
+		<p>
+			<span class="glyphicon glyphicon-info-sign"></span>
+			Liste des cours dont les absences <strong>n'ont pas</strong> été renseignées.
+		</p>	
+	</div>
+{% endif %}
 
 {% if is_paginated %}
 	{% include 'pagination.html' %}
@@ -19,7 +28,11 @@
 		<th>Groupe</th>
 		<th>Début</th>
 		<th>Fin</th>
-		<th>Saisie effectuée</th>
+		{% if nonRenseignes %}
+			<th>Saisir les absence</th>
+		{% else %}
+			<th>Saisie effectuée</th>
+		{% endif %}
 	</tr>
 {% for cours in listeCours %}
 	<tr>
@@ -27,11 +40,15 @@
 		<td>{% for enseignant in cours.donne_par.all %} {{enseignant.user.first_name}} {{enseignant.user.last_name}}{% if not forloop.last %}, {%endif%}{% endfor %}</td>
 		<td>{% for groupe in cours.donne_a.all %} {{groupe.nom}}{% if not forloop.last %}, {%endif%}{% endfor %}</td>
 		<td>{{cours.dateDebut|date:"d/m/Y"}} à {{cours.dateDebut|time:"H:i"}}</td>
-		<td>{{cours.dateDebut|date:"d/m/Y"}} à {{cours.dateDebut|time:"H:i"}}</td>
-		{% if cours.saisieEffectuee %}
-			<td class="alert alert-success">Oui</td>
+		<td>{{cours.dateFin|date:"d/m/Y"}} à {{cours.dateFin|time:"H:i"}}</td>
+		{% if not nonRenseignes %}
+			{% if cours.saisieEffectuee %}
+				<td class="alert alert-success">Oui</td>
+			{% else %}
+				<td class="alert alert-danger">Non</td>
+			{% endif %}
 		{% else %}
-			<td class="alert alert-danger">Non</td>
+			<td><a href="{% url 'absences:saisieAbsences' cours.id %}"><button type="button" class="btn btn-default"><span class="glyphicon glyphicon-pencil"></span> Saisir les absences</button></a></td>
 		{% endif %}
 	</tr>
 	{%empty%}

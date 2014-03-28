@@ -39,8 +39,8 @@ class Groupe(models.Model):
 		return self.nom	
 
 class Cours (models.Model):
-	dateDebut = models.DateTimeField(auto_now = True, auto_now_add = False)
-	dateFin = models.DateTimeField(auto_now = True, auto_now_add = False)
+	dateDebut = models.DateTimeField(auto_now = False, auto_now_add = False)
+	dateFin = models.DateTimeField(auto_now = False, auto_now_add = False)
 	saisieEffectuee = models.BooleanField(default = False)
 	matiere = models.ForeignKey(Matiere)
 	donne_a = models.ManyToManyField(Groupe, related_name='donne_a')
