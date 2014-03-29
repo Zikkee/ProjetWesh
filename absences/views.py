@@ -142,16 +142,18 @@ def listeEleve(request):
 	return render(request, 'absences/listeEleve.html', context)
 
 @login_required
-def infosEleve(request, idEleve):
-	eleve = get_object_or_404(Etudiant, id=idEleve)
+def infosEleve(request, idEleve = 0):
+	if idEleve != 0:
+		eleve = get_object_or_404(Etudiant, id=idEleve)
+	else:
+		eleve = get_object_or_404(Etudiant, user=request.user.id)
+
 	absences = Absence.objects.filter(etudiant=eleve)
 	return render(request, 'absences/infosEleve.html', {'eleve': eleve, 'absences':absences, 'own':True})
 
 @login_required
 def mesAbsences(request):
-	eleve = Etudiant.objects.get(user=request.user.id)
-	absences = Absence.objects.filter(etudiant = eleve)
-	return render(request, 'absences/infosEleve.html', {'eleve':eleve, 'absences':absences})
+	return infosEleve(request)
 
 @login_required
 def infosPromotion(request, idPromotion):
