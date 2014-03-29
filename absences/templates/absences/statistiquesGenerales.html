@@ -1,0 +1,192 @@
+{% extends 'general.html' %}
+
+{% block title %} Statistiques générales{% endblock %}
+
+
+<div class="alert alert-info">
+	<p>Cette page regroupe des statistiques générales sur les absences.</p>
+</div>
+
+
+{% block content %}
+	<h2>Part absences justifiées - absences non justifiées</h2>
+	<p><em>Sur un total de <strong>{{totalAbsences}}</strong> absences.</em></p>
+	<div id="container-abs" style="min-width: 310px; height: 250px; margin: 0 auto"></div>
+
+	<h2>Matières ayant le plus d'absents</h2>
+	<div id="container-mat" style="min-width: 310px; height: 250px; margin: 0 auto"></div>
+
+	<h2>Etudiants les plus absents</h2>
+	<div id="container-etu" style="height: 250px; margin: 0 auto"></div>
+{% endblock %}
+
+{% block additionalJS %}
+
+<script type="text/javascript">
+	$(function () {
+	    $('#container-abs').highcharts({
+	        chart: {
+	            plotBackgroundColor: null,
+	            plotBorderWidth: null,
+	            plotShadow: false
+	        },
+	        title: {
+	            text: 'Absences'
+	        },
+	        tooltip: {
+	    	    pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+	        },
+	        plotOptions: {
+	            pie: {
+	                allowPointSelect: true,
+	                cursor: 'pointer',
+	                dataLabels: {
+	                    enabled: true,
+	                    color: '#000000',
+	                    connectorColor: '#000000',
+	                    format: '<b>{point.name}</b>: {point.percentage:.1f} %'
+	                }
+	            }
+	        },
+	        series: [{
+	            type: 'pie',
+	            name: 'Absences',
+
+	            data: [
+	            	{
+	            		name : 'Absences non justifiées',
+		            	y: {{absencesNonJustifiees}},
+		            	sliced:true,
+		            	selected:true
+	            	},
+	            	['Absences justifiées', {{absencesJustifiees}}],
+	            ]
+	        }]
+	    });
+	});
+</script>
+
+<script type="text/javascript">
+$(function () {
+        $('#container-etu').highcharts({
+            chart: {
+                type: 'column',
+                margin: [ 50, 50, 100, 80]
+            },
+            title: {
+                text: 'Etudiants les plus absents'
+            },
+            xAxis: {
+                categories: [
+                    {% for etudiant in etudiantsAbsents %}
+                    	'{{etudiant}}' {% if not forloop.last %},{%endif%}
+                    {% endfor %}
+                ],
+                labels: {
+                    rotation: -45,
+                    align: 'right',
+                    style: {
+                        fontSize: '13px',
+                        fontFamily: 'Verdana, sans-serif'
+                    }
+                }
+            },
+            yAxis: {
+                min: 0,
+                title: {
+                    text: 'Nombre absences'
+                }
+            },
+            legend: {
+                enabled: false
+            },
+            tooltip: {
+                pointFormat: 'Nombre d\'absences : <b>{point.y}</b>',
+            },
+            series: [{
+                name: 'Absences',
+                data: [
+                	{% for etudiant in etudiantsAbsents %}
+                		{{etudiant.num_abs}} {% if not forloop.last %},{%endif%}
+                	{% endfor %}
+                ],
+                dataLabels: {
+                    enabled: true,
+                    rotation: -90,
+                    color: '#FFFFFF',
+                    align: 'right',
+                    x: 4,
+                    y: 10,
+                    style: {
+                        fontSize: '13px',
+                        fontFamily: 'Verdana, sans-serif',
+                        textShadow: '0 0 3px black'
+                    }
+                }
+            }]
+        });
+    });
+</script>
+
+<script type="text/javascript">
+$(function () {
+        $('#container-mat').highcharts({
+            chart: {
+                type: 'column',
+                margin: [ 50, 50, 100, 80]
+            },
+            title: {
+                text: 'Matières avec le plus d\'absents'
+            },
+            xAxis: {
+                categories: [
+                    {% for matiere in listeAbsencesMatieres %}
+                    	'{{matiere.0.intitule}}' {% if not forloop.last %},{%endif%}
+                    {% endfor %}
+                ],
+                labels: {
+                    rotation: -45,
+                    align: 'right',
+                    style: {
+                        fontSize: '13px',
+                        fontFamily: 'Verdana, sans-serif'
+                    }
+                }
+            },
+            yAxis: {
+                min: 0,
+                title: {
+                    text: 'Nombre absences'
+                }
+            },
+            legend: {
+                enabled: false
+            },
+            tooltip: {
+                pointFormat: 'Nombre d\'absences : <b>{point.y}</b>',
+            },
+            series: [{
+                name: 'Absences',
+                data: [
+                	{% for matiere in listeAbsencesMatieres %}
+                		{{matiere.1}} {% if not forloop.last %},{%endif%}
+                	{% endfor %}
+                ],
+                dataLabels: {
+                    enabled: true,
+                    rotation: -90,
+                    color: '#FFFFFF',
+                    align: 'right',
+                    x: 4,
+                    y: 10,
+                    style: {
+                        fontSize: '13px',
+                        fontFamily: 'Verdana, sans-serif',
+                        textShadow: '0 0 3px black'
+                    }
+                }
+            }]
+        });
+    });
+</script>
+{% endblock %}
