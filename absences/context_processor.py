@@ -42,4 +42,5 @@ def determinerGroupe(request):
 		groupeUtilisateur['secretaire'] = None
 		groupeUtilisateur['enseignant'] = None
 
+	# pdb.set_trace()
 	return {'groupeUtilisateur':groupeUtilisateur}

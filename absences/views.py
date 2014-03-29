@@ -8,8 +8,9 @@ from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib import messages
 from django.contrib.auth.models import User
+from django.db.models import Count
 
-from absences.models import Cours, Absence, Justificatif, Etudiant, Groupe, Enseignant
+from absences.models import Cours, Absence, Justificatif, Etudiant, Groupe, Enseignant, Matiere
 from absences.forms import ConnexionForm, JustificatifForm, JustificatifMultipleForm
 
 from datetime import datetime
@@ -51,6 +52,7 @@ def deconnexion(request):
 	return redirect(reverse('absences:index'))
 
 # Affiche tous les cours de la bdd
+# @permission_required('absences.add_cours')
 class CoursListView(ListView):
 	model = Cours
 	context_object_name = 'listeCours'
@@ -58,6 +60,7 @@ class CoursListView(ListView):
 	paginate_by = 10
 
 # Affiche tous les cours d'une année
+# @permission_required('absences.add_cours')
 class CoursListViewAnne (CoursListView):
 	def get_queryset(self): 
 		dateDebut = datetime(int(self.args[0]), 1, 1, 0, 0, 0)
@@ -66,6 +69,7 @@ class CoursListViewAnne (CoursListView):
 		return Cours.objects.filter(dateDebut__gte = dateDebut, dateFin__lte = dateFin)
 
 # Affiche tous les cours d'un mois
+# @permission_required('absences.add_cours')
 class CoursListViewMois (CoursListView):
 	def get_queryset(self):
 		r = monthrange(int(self.args[0]), int(self.args[1])) # Pour connaître le nombre de jours dans le mois
@@ -76,24 +80,14 @@ class CoursListViewMois (CoursListView):
 		return Cours.objects.filter(dateDebut__gte = dateDebut, dateFin__lte = dateFin)
 
 # Affiche tous les cours d'un jour
+# @permission_required('absences.add_cours')
 class CoursListViewJour (CoursListView):
 	def get_queryset(self):
 		dateDebut = datetime(int(self.args[0]), int(self.args[1]), int(self.args[2]), 0, 0, 0)
 		dateFin = datetime(int(self.args[0]), int(self.args[1]), int(self.args[2]), 23, 59, 59)
 		return Cours.objects.filter(dateDebut__gte = dateDebut, dateFin__lte = dateFin)
 
-# class CoursListeEnseignant (CoursListView):
-# 	def get_queryset(self):
-# 		enseignant = None
-# 		# pdb.set_trace()
-# 		try:
-# 			enseignant = Enseignant.objects.get(user = request.user.id)
-# 		except:
-# 			enseignant = None
-
-# 		pdb.set_trace()
-# 		return Cours.objects.filter(dateFin__lte = datetime.now(), donne_par__id = enseignant)
-
+@permission_required('absences.add_absence')
 def mesCours(request):
 	enseignant = Enseignant.objects.get(user=request.user.id)
 	cours = Cours.objects.filter(dateFin__lte = datetime.now(), donne_par__id= enseignant.id, saisieEffectuee = False).order_by('-dateFin')
@@ -139,7 +133,7 @@ def saisieAbsences(request, cours_id):
 		messages.error(request, 'La saisie pour ce cours a déjà été effectuée.')
 		return redirect(reverse('absences:index'))
 
-	return render(request, 'absences/saisie.html', {'cours':cours, 'etudiants':etudiants})
+	return render(request, 'absences/saisie.html', {'cours':cours})
 	
 @login_required
 def listeEleve(request):
@@ -148,17 +142,23 @@ def listeEleve(request):
 	return render(request, 'absences/listeEleve.html', context)
 
 @login_required
-
 def infosEleve(request, idEleve):
 	eleve = get_object_or_404(Etudiant, id=idEleve)
 	absences = Absence.objects.filter(etudiant=eleve)
-	return render(request, 'absences/infosEleve.html', {'eleve': eleve, 'absences':absences})
+	return render(request, 'absences/infosEleve.html', {'eleve': eleve, 'absences':absences, 'own':True})
+
+@login_required
+def mesAbsences(request):
+	eleve = Etudiant.objects.get(user=request.user.id)
+	absences = Absence.objects.filter(etudiant = eleve)
+	return render(request, 'absences/infosEleve.html', {'eleve':eleve, 'absences':absences})
 
 @login_required
 def infosPromotion(request, idPromotion):
 	promotion = get_object_or_404(Promotion, id=idPromotion)
 	return render(request, 'absences/infosPromotion.html', {'promotion': promotion})
 
+@permission_required('absences.add_justificatif')
 def ajouterJustificatif(request, absence_id):
 	absence = get_object_or_404(Absence, pk=absence_id)
 	cours = absence.cours 
@@ -183,6 +183,7 @@ def ajouterJustificatif(request, absence_id):
 
 	return render(request, 'absences/ajouterJustificatif.html',{'absence':absence, 'form':form})
 
+@permission_required('absences.add_justificatif')
 def ajouterMultipleJustificatif(request):
 	"""Aouter un justificatif pour plusieurs cours"""
 	form = None
@@ -226,3 +227,60 @@ def obtenirJustificatif(request, idAbsence):
 	justificatif = absence.justificatif
 	
 	return HttpResponse(justificatif.genre)
+
+
+def mesStatistiques(request, idEtudiant = 0):
+	
+	if idEtudiant == 0:
+		etudiant = get_object_or_404(Etudiant, user=request.user.id)
+	else:
+		etudiant = get_object_or_404(Etudiant, pk=idEtudiant)
+
+	nb = {}
+	nb['nonJustifiees'] = {}
+	nb['justifiees'] = {} 
+
+	nb['nonJustifiees']['nb'] = Absence.objects.filter(etudiant = etudiant, justifie = False).count()
+	nb['nonJustifiees']['name'] = 'Non justifiées'
+
+	nb['justifiees']['nb'] = Absence.objects.filter(etudiant = etudiant, justifie = True).count()
+	nb['justifiees']['name'] = 'Justifiées'
+
+	nb['total'] = nb['justifiees']['nb'] + nb['nonJustifiees']['nb']
+
+	absences = Absence.objects.filter(etudiant = etudiant)
+	listeAbsences = {}
+
+	for absence in absences:
+		matiere = absence.cours.matiere.intitule
+		if not matiere in listeAbsences.keys():
+			listeAbsences[matiere] = 1
+		else:
+			listeAbsences[matiere] += 1
+
+	return render(request, 'absences/statistiquesEtudiant.html', {'nb':nb, 'listeAbsences':listeAbsences})
+
+def statistiquesEtudiant(request, idEtudiant):
+	return mesStatistiques(request, idEtudiant)
+
+def statistiquesGenerales(request):
+
+	# Absences justifiées - non justifiées
+	absencesNonJustifiees = Absence.objects.filter(justifie = False).count()
+	absencesJustifiees = Absence.objects.filter(justifie = True).count()
+	totalAbsences = absencesJustifiees+absencesNonJustifiees
+
+	# 5 matières avec le plus d'absents
+	listeAbsencesMatieres = {}
+
+	matieres = Matiere.objects.all()
+	for matiere in matieres:
+		listeAbsencesMatieres[matiere] = Absence.objects.filter(cours__matiere = matiere).count()
+
+	sortedListeAbsencesMatieres = sorted(listeAbsencesMatieres.items(), key=lambda x: x[1], reverse=True)
+	listeAbsencesMatieres = sortedListeAbsencesMatieres[:5]
+
+	# 5 etudiants les plus absents
+	etudiantsAbsents = Etudiant.objects.annotate(num_abs=Count('absence')).order_by('-num_abs')[:5]
+
+	return render(request, 'absences/statistiquesGenerales.html', {'listeAbsencesMatieres': listeAbsencesMatieres, 'absencesNonJustifiees':absencesNonJustifiees, 'absencesJustifiees':absencesJustifiees, 'totalAbsences':totalAbsences, 'etudiantsAbsents':etudiantsAbsents})
