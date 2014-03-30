@@ -165,7 +165,7 @@ def infosPromotion(request, idPromotion):
 	return render(request, 'absences/infosPromotion.html', {'promotion': promotion})
 
 @permission_required('absences.add_justificatif')
-def ajouterJustificatif(request, absence_id):
+def ajouterJustificatif(request, absence_id, page_precedente, id_precedent):
 	absence = get_object_or_404(Absence, pk=absence_id)
 	cours = absence.cours 
 
