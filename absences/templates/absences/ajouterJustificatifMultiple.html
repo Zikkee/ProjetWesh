@@ -17,7 +17,7 @@
 <form method="post" action="" role="form">
 	{% csrf_token %}
 	{% for field in form %}
-		<div class="form-group">
+		<div class="form-group">				
 			{{field.label_tag}} {{field|addcss:"form-control"}}
 		</div>
 	{% endfor %}
@@ -25,4 +25,14 @@
 	<button type="submit" class="btn btn-default">Envoyer</button>
 </form>
 
+{% endblock %}
+
+{% block additionalJS %}
+<script type="text/javascript">
+$(function(){
+	$('*[name=dateDebut]').appendDtpicker();
+	$('*[name=dateFin]').appendDtpicker();
+});
+
+</script>
 {% endblock %}

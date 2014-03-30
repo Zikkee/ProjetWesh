@@ -23,10 +23,11 @@ from calendar import monthrange
 import pdb
 
 
+# Vue de la page d'index
 def index(request):
 	return render(request, 'absences/index.html')
 
-# Permet la connexion
+# Vue permettant la connexion d'un utilisateur
 def connexion(request):
 	error = False
 	if request.method == 'POST':
@@ -42,17 +43,22 @@ def connexion(request):
 				return redirect(reverse('absences:index'))
 			else:
 				error = True
+		else:
+			error = True
 	else:
 		form = ConnexionForm()
+
+	if error:
+		messages.error(request, 'Vos identifiants ne sont pas corrects.')
 	return render(request, 'absences/connexion.html', {'form':form})
 
-# Permet la déconnexion
+#Vue permettant la déconnexion
+@login_required
 def deconnexion(request):
 	logout(request)
 	return redirect(reverse('absences:index'))
 
-# Affiche tous les cours de la bdd
-# @permission_required('absences.add_cours')
+# Affiche tous les cours donnés
 class CoursListView(ListView):
 	model = Cours
 	context_object_name = 'listeCours'
@@ -60,7 +66,6 @@ class CoursListView(ListView):
 	paginate_by = 10
 
 # Affiche tous les cours d'une année
-# @permission_required('absences.add_cours')
 class CoursListViewAnne (CoursListView):
 	def get_queryset(self): 
 		dateDebut = datetime(int(self.args[0]), 1, 1, 0, 0, 0)
@@ -69,7 +74,6 @@ class CoursListViewAnne (CoursListView):
 		return Cours.objects.filter(dateDebut__gte = dateDebut, dateFin__lte = dateFin)
 
 # Affiche tous les cours d'un mois
-# @permission_required('absences.add_cours')
 class CoursListViewMois (CoursListView):
 	def get_queryset(self):
 		r = monthrange(int(self.args[0]), int(self.args[1])) # Pour connaître le nombre de jours dans le mois
@@ -80,13 +84,13 @@ class CoursListViewMois (CoursListView):
 		return Cours.objects.filter(dateDebut__gte = dateDebut, dateFin__lte = dateFin)
 
 # Affiche tous les cours d'un jour
-# @permission_required('absences.add_cours')
 class CoursListViewJour (CoursListView):
 	def get_queryset(self):
 		dateDebut = datetime(int(self.args[0]), int(self.args[1]), int(self.args[2]), 0, 0, 0)
 		dateFin = datetime(int(self.args[0]), int(self.args[1]), int(self.args[2]), 23, 59, 59)
 		return Cours.objects.filter(dateDebut__gte = dateDebut, dateFin__lte = dateFin)
 
+# Vue resensant tous les cours dispensés par un enseignant dont les absences n'ont pas été renseignées
 @permission_required('absences.add_absence')
 def mesCours(request):
 	enseignant = Enseignant.objects.get(user=request.user.id)
@@ -94,6 +98,7 @@ def mesCours(request):
 
 	return render(request, 'absences/listeCours.html', {'listeCours':cours, 'nonRenseignes':True})
 
+# Vue permettant de voir les détails d'un cours donné
 @login_required
 def consultationCours(request, cours_id):
 	cours = get_object_or_404(Cours, pk=cours_id)
@@ -101,6 +106,7 @@ def consultationCours(request, cours_id):
 
 	return render(request, 'absences/consultationCours.html', {'cours':cours, 'absences':absences})
 
+# Vue permettant de saisir les absences d'un cours donné 
 @permission_required('absences.add_absence')
 def saisieAbsences(request, cours_id):
 	cours = get_object_or_404(Cours, pk=cours_id)
@@ -135,6 +141,7 @@ def saisieAbsences(request, cours_id):
 
 	return render(request, 'absences/saisie.html', {'cours':cours})
 	
+# Vue permettant de voir la liste des élèves
 @login_required
 def listeEleve(request):
 	listeEleve = Etudiant.objects.all()
@@ -145,6 +152,7 @@ def listeEleve(request):
 	context = {'infos': dicoInfos}
 	return render(request, 'absences/listeEleve.html', context)
 
+# Vue permettant de voir les détails d'un élève donné
 @login_required
 def infosEleve(request, idEleve = 0):
 	if idEleve != 0:
@@ -155,15 +163,18 @@ def infosEleve(request, idEleve = 0):
 	absences = Absence.objects.filter(etudiant=eleve)
 	return render(request, 'absences/infosEleve.html', {'eleve': eleve, 'absences':absences, 'own':True})
 
+# Vue permettant, pour un étudiant connecté, de voir ses absences
 @login_required
 def mesAbsences(request):
 	return infosEleve(request)
 
+# Vue permettant de voir les détails d'une promotion
 @login_required
 def infosPromotion(request, idPromotion):
 	promotion = get_object_or_404(Promotion, id=idPromotion)
 	return render(request, 'absences/infosPromotion.html', {'promotion': promotion})
 
+# Vue permettant d'ajouter un justificatif pour une absence donnée
 @permission_required('absences.add_justificatif')
 def ajouterJustificatif(request, absence_id, page_precedente, id_precedent):
 	absence = get_object_or_404(Absence, pk=absence_id)
@@ -189,6 +200,7 @@ def ajouterJustificatif(request, absence_id, page_precedente, id_precedent):
 
 	return render(request, 'absences/ajouterJustificatif.html',{'absence':absence, 'form':form})
 
+# Vue permettant d'ajouter un justificatif pour plusieurs matières en même temps et pour une période donnée
 @permission_required('absences.add_justificatif')
 def ajouterMultipleJustificatif(request):
 	"""Aouter un justificatif pour plusieurs cours"""
@@ -227,14 +239,15 @@ def ajouterMultipleJustificatif(request):
 		form = JustificatifMultipleForm()
 
 	return render(request, 'absences/ajouterJustificatifMultiple.html', {'form':form})
-	
+
+# Permet de visualiser un justificatif donnée
 def obtenirJustificatif(request, idAbsence):
 	absence = get_object_or_404(Absence, id=idAbsence)
 	justificatif = absence.justificatif
 	
 	return HttpResponse(justificatif.genre)
 
-
+# Pour un étudiant donné, permet de voir ses statistiques
 def mesStatistiques(request, idEtudiant = 0):
 	
 	if idEtudiant == 0:
@@ -266,9 +279,11 @@ def mesStatistiques(request, idEtudiant = 0):
 
 	return render(request, 'absences/statistiquesEtudiant.html', {'nb':nb, 'listeAbsences':listeAbsences})
 
+# Permet de voir les statistiques d'un étudiant donné
 def statistiquesEtudiant(request, idEtudiant):
 	return mesStatistiques(request, idEtudiant)
 
+#Permet de voir les statistiques générales sur les absences 
 def statistiquesGenerales(request):
 
 	# Absences justifiées - non justifiées
