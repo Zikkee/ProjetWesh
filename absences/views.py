@@ -58,7 +58,8 @@ def deconnexion(request):
 	logout(request)
 	return redirect(reverse('absences:index'))
 
-# Affiche tous les cours donnés
+# Affiche tous les cours de la bdd
+# @permission_required('absences.add_cours')
 class CoursListView(ListView):
 	model = Cours
 	context_object_name = 'listeCours'
@@ -66,6 +67,7 @@ class CoursListView(ListView):
 	paginate_by = 10
 
 # Affiche tous les cours d'une année
+# @permission_required('absences.add_cours')
 class CoursListViewAnne (CoursListView):
 	def get_queryset(self): 
 		dateDebut = datetime(int(self.args[0]), 1, 1, 0, 0, 0)
@@ -74,6 +76,7 @@ class CoursListViewAnne (CoursListView):
 		return Cours.objects.filter(dateDebut__gte = dateDebut, dateFin__lte = dateFin)
 
 # Affiche tous les cours d'un mois
+# @permission_required('absences.add_cours')
 class CoursListViewMois (CoursListView):
 	def get_queryset(self):
 		r = monthrange(int(self.args[0]), int(self.args[1])) # Pour connaître le nombre de jours dans le mois
@@ -84,6 +87,7 @@ class CoursListViewMois (CoursListView):
 		return Cours.objects.filter(dateDebut__gte = dateDebut, dateFin__lte = dateFin)
 
 # Affiche tous les cours d'un jour
+# @permission_required('absences.add_cours')
 class CoursListViewJour (CoursListView):
 	def get_queryset(self):
 		dateDebut = datetime(int(self.args[0]), int(self.args[1]), int(self.args[2]), 0, 0, 0)
@@ -171,8 +175,13 @@ def mesAbsences(request):
 # Vue permettant de voir les détails d'une promotion
 @login_required
 def infosPromotion(request, idPromotion):
-	promotion = get_object_or_404(Promotion, id=idPromotion)
-	return render(request, 'absences/infosPromotion.html', {'promotion': promotion})
+	promo = get_object_or_404(Promotion, id=idPromotion)
+	eleves = Etudiant.objects.filter(promotion=promo)
+	dicoInfos = {}
+	for e in eleves:
+		groupesEtudiant = Groupe.objects.filter(etudiants=e)
+		dicoInfos[e] = groupesEtudiant
+	return render(request, 'absences/infosPromotion.html', {'promotion': promo, 'infos': dicoInfos})
 
 # Vue permettant d'ajouter un justificatif pour une absence donnée
 @permission_required('absences.add_justificatif')
