@@ -1,11 +1,9 @@
-<div class="pagination">
-	<p>
+<ul class="pagination">
 	{% if page_obj.has_previous %}
-		<a href="?page={{ page_obj.previous_page_number }}">Précédente</a> —
+		<li><a href="?page={{ page_obj.previous_page_number }}">&laquo;</a></li>
 	{% endif %}
-	Page {{ page_obj.number }} sur {{ page_obj.paginator.num_pages }} 
+	<li><a href="">Page {{ page_obj.number }} sur {{ page_obj.paginator.num_pages }}</a></li>
 	{% if page_obj.has_next %}
-		— <a href="?page={{ page_obj.next_page_number }}">Suivante</a>
+		<li><a href="?page={{ page_obj.next_page_number }}">&raquo;</a></li>
 	{% endif %}
-	</p>
-</div>
+</ul>
