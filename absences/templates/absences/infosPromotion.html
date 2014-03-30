@@ -16,11 +16,11 @@
                 {% for eleve, groupes in infos.items %}
                     <tr>
                         <td>
-                            {{eleve.user.first_name}} {{eleve.user.last_name}}
+                            <a href="{% url 'absences:infosEleve' eleve.id %}">{{eleve.user.first_name}} {{eleve.user.last_name}}</a>
                         </td>
                         <td>
                             {% for g in groupes %}
-                                {{g.nom}}
+                                <a href="{% url 'absences:infosGroupe' g.id %}">{{g.nom}}</a>
                                 {% if not forloop.last %}
                                     ,
                                 {% endif %}
