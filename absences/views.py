@@ -10,7 +10,7 @@ from django.contrib import messages
 from django.contrib.auth.models import User
 from django.db.models import Count
 
-from absences.models import Cours, Absence, Justificatif, Etudiant, Groupe, Enseignant, Matiere
+from absences.models import Cours, Absence, Justificatif, Etudiant, Groupe, Enseignant, Matiere, Promotion
 from absences.forms import ConnexionForm, JustificatifForm, JustificatifMultipleForm
 
 from datetime import datetime
@@ -138,7 +138,11 @@ def saisieAbsences(request, cours_id):
 @login_required
 def listeEleve(request):
 	listeEleve = Etudiant.objects.all()
-	context = {'listeEleve': listeEleve}
+	dicoInfos = {}
+	for e in listeEleve:
+		groupesEtudiant = Groupe.objects.filter(etudiants=e)
+		dicoInfos[e] = groupesEtudiant
+	context = {'infos': dicoInfos}
 	return render(request, 'absences/listeEleve.html', context)
 
 @login_required
@@ -161,7 +165,7 @@ def infosPromotion(request, idPromotion):
 	return render(request, 'absences/infosPromotion.html', {'promotion': promotion})
 
 @permission_required('absences.add_justificatif')
-def ajouterJustificatif(request, absence_id):
+def ajouterJustificatif(request, absence_id, page_precedente, id_precedent):
 	absence = get_object_or_404(Absence, pk=absence_id)
 	cours = absence.cours 
 
