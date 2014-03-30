@@ -314,3 +314,9 @@ def statistiquesGenerales(request):
 	etudiantsAbsents = Etudiant.objects.annotate(num_abs=Count('absence')).order_by('-num_abs')[:5]
 
 	return render(request, 'absences/statistiquesGenerales.html', {'listeAbsencesMatieres': listeAbsencesMatieres, 'absencesNonJustifiees':absencesNonJustifiees, 'absencesJustifiees':absencesJustifiees, 'totalAbsences':totalAbsences, 'etudiantsAbsents':etudiantsAbsents})
+
+def infosGroupe(request, idGroupe):
+
+	groupe = get_object_or_404(Groupe, id=idGroupe)
+
+	return render(request, 'absences/infosGroupe.html', {'groupe': groupe})
