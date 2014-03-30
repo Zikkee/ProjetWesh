@@ -10,7 +10,7 @@ from django.contrib import messages
 from django.contrib.auth.models import User
 from django.db.models import Count
 
-from absences.models import Cours, Absence, Justificatif, Etudiant, Groupe, Enseignant, Matiere
+from absences.models import Cours, Absence, Justificatif, Etudiant, Groupe, Enseignant, Matiere, Promotion
 from absences.forms import ConnexionForm, JustificatifForm, JustificatifMultipleForm
 
 from datetime import datetime
@@ -138,7 +138,11 @@ def saisieAbsences(request, cours_id):
 @login_required
 def listeEleve(request):
 	listeEleve = Etudiant.objects.all()
-	context = {'listeEleve': listeEleve}
+	dicoInfos = {}
+	for e in listeEleve:
+		groupesEtudiant = Groupe.objects.filter(etudiants=e)
+		dicoInfos[e] = groupesEtudiant
+	context = {'infos': dicoInfos}
 	return render(request, 'absences/listeEleve.html', context)
 
 @login_required
