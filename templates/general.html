@@ -30,13 +30,11 @@
 			</div>
 		</nav>
 		<!-- Fin barre de navigation -->
-<!-- 		<h1>Gestion des absences <small>Polytech Nantes</small></h1>
- -->		
+	
  		{% if groupeUtilisateur.etudiant %}
  			{% if nb.absences > 3 %}
  				<div class="alert alert-warning">
  					<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-
  					Vous avez plus de 3 absences injustifiées. Veuillez les justifier auprès du secrétariat.
  				</div>
  			{% endif %}
@@ -61,21 +59,21 @@
 		<div class="row">
 			<div class="col-md-2">
 				<ul class="nav nav-pills nav-stacked">
-				  	<li class="active"><a href="{% url 'absences:index' %}">Accueil</a></li>
+				  	<li class="active"><a href="{% url 'absences:index' %}"><span class="glyphicon glyphicon-home"></span> Accueil</a></li>
 					{% if groupeUtilisateur.etudiant %}
 						<li><a href="{% url 'absences:mesAbsences' %}">Mes absences <span class="badge pull-right">{{nb.absences}}</span></a></li>
 						<li><a href="{% url 'absences:mesStatistiques' %}">Mes statistiques</a></li>
 					{% endif %}
 					{% if groupeUtilisateur.secretaire or groupeUtilisateur.enseignant or perms.absences.add_justificatif %}
-					<li><a href="{% url 'absences:listeCours' %}">Liste des cours</a></li>
-					<li><a href="{% url 'absences:listeEleve' %}">Liste des étudiants</a></li>
-					<li><a href="{% url 'absences:statistiquesGenerales' %}">Statistiques</a></li>
+					<li><a href="{% url 'absences:listeCours' %}"><span class="glyphicon glyphicon-th-list"></span> Liste des cours</a></li>
+					<li><a href="{% url 'absences:listeEleve' %}"><span class="glyphicon glyphicon-user"></span> Etudiants</a></li>
+					<li><a href="{% url 'absences:statistiquesGenerales' %}"><span class="glyphicon glyphicon-signal"></span> Statistiques</a></li>
 					{% endif %}
 					{% if groupeUtilisateur.enseignant %}
-					<li><a href="{% url 'absences:listeCoursEnseignant' %}">Cours donnés <span class="badge pull-right">{{nb.nonSaisis}}</span></a></li>
+					<li><a href="{% url 'absences:listeCoursEnseignant' %}"><span class="glyphicon glyphicon-book"></span> Mes cours<span class="badge pull-right">{{nb.nonSaisis}}</span></a></li>
 					{% endif %}
 					{% if groupeUtilisateur.secretaire or perms.absences.add_justificatif %}
-					<li><a href="{% url 'absences:ajouterMultipleJustificatif' %}">Ajouter justificatif</a></li>
+					<li><a href="{% url 'absences:ajouterMultipleJustificatif' %}"><span class="glyphicon glyphicon-plus"></span> Ajouter justificatif</a></li>
 					{% endif %}
 				</ul>
 			</div>
