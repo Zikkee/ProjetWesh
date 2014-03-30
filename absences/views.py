@@ -161,8 +161,13 @@ def mesAbsences(request):
 
 @login_required
 def infosPromotion(request, idPromotion):
-	promotion = get_object_or_404(Promotion, id=idPromotion)
-	return render(request, 'absences/infosPromotion.html', {'promotion': promotion})
+	promo = get_object_or_404(Promotion, id=idPromotion)
+	eleves = Etudiant.objects.filter(promotion=promo)
+	dicoInfos = {}
+	for e in eleves:
+		groupesEtudiant = Groupe.objects.filter(etudiants=e)
+		dicoInfos[e] = groupesEtudiant
+	return render(request, 'absences/infosPromotion.html', {'promotion': promo, 'infos': dicoInfos})
 
 @permission_required('absences.add_justificatif')
 def ajouterJustificatif(request, absence_id, page_precedente, id_precedent):

@@ -5,6 +5,33 @@
 	{% if promotion %}
 		<h2>Promotion {{promotion}}</h2>
 		<p>Responsable : {{promotion.responsable}}</p>
+        <table class="table table-striped table-hover">
+            <thead>
+                <tr>
+                    <th>Étudiant</th>
+                    <th>Groupes</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for eleve, groupes in infos.items %}
+                    <tr>
+                        <td>
+                            {{eleve.user.first_name}} {{eleve.user.last_name}}
+                        </td>
+                        <td>
+                            {% for g in groupes %}
+                                {{g.nom}}
+                                {% if not forloop.last %}
+                                    ,
+                                {% endif %}
+                            {% endfor %}
+                        </td>
+                    </tr>
+                {% endfor %}
+                <tr>
+                </tr>
+            </tbody>
+        </table>
 	{% else %}
 		<p>Cette promotion n'existe pas !</p>
 	{% endif %}
