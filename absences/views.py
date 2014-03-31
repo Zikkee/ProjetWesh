@@ -117,6 +117,14 @@ def consultationCours(request, cours_id):
 @permission_required('absences.add_absence')
 def saisieAbsences(request, cours_id):
 	cours = get_object_or_404(Cours, pk=cours_id)
+	enseignant = Enseignant.objects.get(user=request.user)
+
+	if enseignant not in cours.donne_par.all():
+		messages.error(request, "Vous ne pouvez pas saisir les absences d'un cours que vous n'avez pas enseigné")
+		return redirect(reverse('absences:consultationCours', args=(cours_id,)))
+
+	# pdb.set_trace()
+
 	etudiants = []
 
 	#Si la saisie a déjà été effectuée pour ce cours, on redirige vers l'index
@@ -151,14 +159,12 @@ def saisieAbsences(request, cours_id):
 # Vue permettant de voir la liste des élèves
 @login_required
 def listeEleve(request):
-	listeEleve = Etudiant.objects.all().order_by('-user__last_name')
-	dicoInfos = {}
-
+	listeEleve = Etudiant.objects.all().order_by('user__last_name')
+	infos = []
 	for e in listeEleve:
-		groupesEtudiant = Groupe.objects.filter(etudiants = e)
-		dicoInfos[e] = groupesEtudiant
-
-	context = {'infos': dicoInfos}
+		groupesEtudiant = Groupe.objects.filter(etudiants=e)
+		infos.append((e, groupesEtudiant))
+	context = {'infos': infos}
 	return render(request, 'absences/listeEleve.html', context)
 
 # Vue permettant de voir les détails d'un élève donné
@@ -327,17 +333,17 @@ def infosGroupe(request, idGroupe):
 	return render(request, 'absences/infosGroupe.html', {'groupe': groupe})
 	
 def listePromotions(request):
-	infos = {}
-	promotions = Promotion.objects.all()
+	infos = []
+	promotions = Promotion.objects.all().order_by('nom')
 	for p in promotions:
 		nbEtudiants = Etudiant.objects.filter(promotion=p).count()
-		infos[p] = nbEtudiants
+		infos.append((p, nbEtudiants))
 	return render(request, 'absences/listePromotions.html', {'infos': infos})
 	
 def listeGroupes(request):
-	infos = {}
-	groupes = Groupe.objects.all()
+	infos = []
+	groupes = Groupe.objects.all().order_by('nom')
 	for groupe in groupes:
 		nbEtudiants = groupe.etudiants.count()
-		infos[groupe] = nbEtudiants
+		infos.append((groupe, nbEtudiants))
 	return render(request, 'absences/listeGroupes.html', {'infos': infos})

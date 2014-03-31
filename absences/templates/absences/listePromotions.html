@@ -16,12 +16,12 @@
                 </tr>
             </thead>
             <tbody>
-                {% for promotion, nbEtudiants in infos.items %}
+                {% for paire in infos %}
                     <tr>
                         <td>
-                            <a href="{% url 'absences:infosPromotion' promotion.id %}">{{promotion.nom}}</a>
+                            <a href="{% url 'absences:infosPromotion' paire.0.id %}">{{paire.0.nom}}</a>
                         </td>
-                        <td>{{nbEtudiants}}</td>
+                        <td>{{paire.1}}</td>
                     </tr>
                 {% endfor %}
             </tbody>

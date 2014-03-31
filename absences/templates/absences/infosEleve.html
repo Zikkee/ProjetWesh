@@ -1,6 +1,7 @@
 {% extends 'general.html' %}
 
 
+{% block title %} Informations de {{eleve.user.first_name}} {{eleve.user.last_name}}{% endblock %}
 {%block content %}
 	{% if eleve %}
 		<h2>Informations sur l'élève {{eleve.user.first_name}} {{eleve.user.last_name}}</h2>
