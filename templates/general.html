@@ -78,6 +78,8 @@
 					{% if groupeUtilisateur.secretaire or groupeUtilisateur.enseignant or perms.absences.add_justificatif %}
 					<li><a href="{% url 'absences:listeCours' %}"><span class="glyphicon glyphicon-th-list"></span> Liste des cours</a></li>
 					<li><a href="{% url 'absences:listeEleve' %}"><span class="glyphicon glyphicon-user"></span> Etudiants</a></li>
+					<li><a href="{% url 'absences:listeGroupes' %}"><span class="glyphicon glyphicon-user"></span> Groupes</a></li>
+					<li><a href="{% url 'absences:listePromotions' %}"><span class="glyphicon glyphicon-user"></span> Promotions</a></li>
 					<li><a href="{% url 'absences:statistiquesGenerales' %}"><span class="glyphicon glyphicon-signal"></span> Statistiques</a></li>
 					{% endif %}
 					{% if groupeUtilisateur.enseignant %}

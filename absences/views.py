@@ -325,3 +325,19 @@ def infosGroupe(request, idGroupe):
 	groupe = get_object_or_404(Groupe, id=idGroupe)
 
 	return render(request, 'absences/infosGroupe.html', {'groupe': groupe})
+	
+def listePromotions(request):
+	infos = {}
+	promotions = Promotion.objects.all()
+	for p in promotions:
+		nbEtudiants = Etudiant.objects.filter(promotion=p).count()
+		infos[p] = nbEtudiants
+	return render(request, 'absences/listePromotions.html', {'infos': infos})
+	
+def listeGroupes(request):
+	infos = {}
+	groupes = Groupe.objects.all()
+	for groupe in groupes:
+		nbEtudiants = groupe.etudiants.count()
+		infos[groupe] = nbEtudiants
+	return render(request, 'absences/listeGroupes.html', {'infos': infos})
