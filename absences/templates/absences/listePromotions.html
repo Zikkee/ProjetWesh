@@ -1,0 +1,32 @@
+{% extends 'general.html' %}
+
+{% block title %}Liste des promotions{% endblock %}
+
+{% block content %}
+    {% if infos %}
+        <table class="table table-striped table-hover">
+            <thead>
+                <tr>
+                    <th>
+                        Promotion
+                    </th>
+                    <th>
+                        Nombre d'étudiants
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for promotion, nbEtudiants in infos.items %}
+                    <tr>
+                        <td>
+                            <a href="{% url 'absences:infosPromotion' promotion.id %}">{{promotion.nom}}</a>
+                        </td>
+                        <td>{{nbEtudiants}}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>Impossible de récupérer la liste des promotions</p>
+    {% endif %}
+{% endblock %}
