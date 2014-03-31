@@ -11,21 +11,21 @@
 				</tr>
 			</thead>
 			<tbody>
-		{% for eleve, listeGroupe in infos.items %}
+		{% for paire in infos %}
 			<tr>
 				<td>
-					<a href="{% url 'absences:infosEleve' eleve.id %}">{{eleve.user.first_name}} {{eleve.user.last_name}}</a>
+					<a href="{% url 'absences:infosEleve' paire.0.id %}">{{paire.0.user.last_name}} {{paire.0.user.first_name}}</a>
 				</td>
 				<td>
-					{% for groupe in listeGroupe %}
-                        {{groupe.nom}}
+					{% for groupe in paire.1 %}
+                        <a href="{% url 'absences:infosGroupe' groupe.id %}">{{groupe.nom}}</a>
                         {% if not forloop.last %}
                             ,
                         {% endif %}
                     {% endfor %}
 				</td>
 				<td>
-					<a href="{% url 'absences:infosPromotion' eleve.promotion.id %}">{{eleve.promotion}}</a>
+					<a href="{% url 'absences:infosPromotion' paire.0.promotion.id %}">{{paire.0.promotion}}</a>
 				</td>
 			</tr>
 		{% endfor %}
