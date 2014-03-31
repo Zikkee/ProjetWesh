@@ -1,5 +1,6 @@
 {% extends 'general.html' %}
 
+{% block title %} Informations sur le groupe "{{groupe.nom}}" {% endblock %}
 {% block content %}
     {% if groupe %}
         <h2>Groupe {{groupe.nom}}</h2>

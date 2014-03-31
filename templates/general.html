@@ -40,6 +40,16 @@
  				</div>
  			{% endif %}
  		{% endif %}
+
+ 		{% if groupeUtilisateur.enseignant %}
+ 			{% if nb.nonSaisis > 3 %}
+ 				<div class="alert alert-warning">
+ 					<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+ 					Il y a plus de trois cours que vous avez donné dont les absences n'ont pas été renseignées.
+ 				</div>
+ 			{% endif %}
+ 		{% endif %}
+
 		{% if messages %}
 				{% for message in messages %}
 					{% if message.tags == 'error' %}

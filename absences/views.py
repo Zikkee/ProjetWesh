@@ -66,6 +66,9 @@ class CoursListView(ListView):
 	template_name = 'absences/listeCours.html'
 	paginate_by = 10
 
+	def get_queryset(self):
+		return Cours.objects.order_by('-dateFin')
+
 # Affiche tous les cours d'une année
 # @permission_required('absences.add_cours')
 class CoursListViewAnne (CoursListView):
@@ -73,7 +76,7 @@ class CoursListViewAnne (CoursListView):
 		dateDebut = datetime(int(self.args[0]), 1, 1, 0, 0, 0)
 		dateFin = datetime(int(self.args[0]), 12, 31, 23, 59, 59)
 
-		return Cours.objects.filter(dateDebut__gte = dateDebut, dateFin__lte = dateFin)
+		return Cours.objects.filter(dateDebut__gte = dateDebut, dateFin__lte = dateFin).order_by('-dateFin')
 
 # Affiche tous les cours d'un mois
 # @permission_required('absences.add_cours')
@@ -84,7 +87,7 @@ class CoursListViewMois (CoursListView):
 
 		dateDebut = datetime(int(self.args[0]), int(self.args[1]), 1, 0, 0, 0)
 		dateFin = datetime(int(self.args[0]), int(self.args[1]), nbJours, 23, 59, 59)
-		return Cours.objects.filter(dateDebut__gte = dateDebut, dateFin__lte = dateFin)
+		return Cours.objects.filter(dateDebut__gte = dateDebut, dateFin__lte = dateFin).order_by('-dateFin')
 
 # Affiche tous les cours d'un jour
 # @permission_required('absences.add_cours')
@@ -92,7 +95,7 @@ class CoursListViewJour (CoursListView):
 	def get_queryset(self):
 		dateDebut = datetime(int(self.args[0]), int(self.args[1]), int(self.args[2]), 0, 0, 0)
 		dateFin = datetime(int(self.args[0]), int(self.args[1]), int(self.args[2]), 23, 59, 59)
-		return Cours.objects.filter(dateDebut__gte = dateDebut, dateFin__lte = dateFin)
+		return Cours.objects.filter(dateDebut__gte = dateDebut, dateFin__lte = dateFin).order_by('-dateFin')
 
 # Vue resensant tous les cours dispensés par un enseignant dont les absences n'ont pas été renseignées
 @permission_required('absences.add_absence')
@@ -114,6 +117,14 @@ def consultationCours(request, cours_id):
 @permission_required('absences.add_absence')
 def saisieAbsences(request, cours_id):
 	cours = get_object_or_404(Cours, pk=cours_id)
+	enseignant = Enseignant.objects.get(user=request.user)
+
+	if enseignant not in cours.donne_par.all():
+		messages.error(request, "Vous ne pouvez pas saisir les absences d'un cours que vous n'avez pas enseigné")
+		return redirect(reverse('absences:consultationCours', args=(cours_id,)))
+
+	# pdb.set_trace()
+
 	etudiants = []
 
 	#Si la saisie a déjà été effectuée pour ce cours, on redirige vers l'index
