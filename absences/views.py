@@ -181,7 +181,26 @@ def infosPromotion(request, idPromotion):
 	for e in eleves:
 		groupesEtudiant = Groupe.objects.filter(etudiants=e)
 		dicoInfos[e] = groupesEtudiant
-	return render(request, 'absences/infosPromotion.html', {'promotion': promo, 'infos': dicoInfos})
+	
+	# Absences justifiées - non justifiées
+	absencesNonJustifiees = Absence.objects.filter(etudiant__promotion=promo, justifie=False).count()
+	absencesJustifiees = Absence.objects.filter(etudiant__promotion=promo, justifie=True).count()
+	totalAbsences = absencesJustifiees+absencesNonJustifiees
+	
+	# 5 matières avec le plus d'absents
+	listeAbsencesMatieres = {}
+
+	matieres = Matiere.objects.all()
+	for matiere in matieres:
+		listeAbsencesMatieres[matiere] = Absence.objects.filter(cours__matiere = matiere, etudiant__promotion=promo).count()
+
+	sortedListeAbsencesMatieres = sorted(listeAbsencesMatieres.items(), key=lambda x: x[1], reverse=True)
+	listeAbsencesMatieres = sortedListeAbsencesMatieres[:5]
+	
+	# 5 etudiants les plus absents
+	etudiantsAbsents = Etudiant.objects.filter(promotion=promo).annotate(num_abs=Count('absence')).order_by('-num_abs')[:5]
+	
+	return render(request, 'absences/infosPromotion.html', {'listeAbsencesMatieres': listeAbsencesMatieres, 'absencesNonJustifiees':absencesNonJustifiees, 'absencesJustifiees':absencesJustifiees, 'totalAbsences':totalAbsences, 'etudiantsAbsents':etudiantsAbsents, 'promotion': promo, 'infos': dicoInfos})
 
 # Vue permettant d'ajouter un justificatif pour une absence donnée
 @permission_required('absences.add_justificatif')
@@ -318,8 +337,27 @@ def statistiquesGenerales(request):
 def infosGroupe(request, idGroupe):
 
 	groupe = get_object_or_404(Groupe, id=idGroupe)
+	
+	# Absences justifiées - non justifiées
+	absencesNonJustifiees = Absence.objects.filter(cours__donne_a=groupe, justifie=False).count()
+	absencesJustifiees = Absence.objects.filter(cours__donne_a=groupe, justifie=True).count()
+	totalAbsences = absencesJustifiees+absencesNonJustifiees
+	
+	# 5 matières avec le plus d'absents
+	listeAbsencesMatieres = {}
 
-	return render(request, 'absences/infosGroupe.html', {'groupe': groupe})
+	matieres = Matiere.objects.all()
+	for matiere in matieres:
+		listeAbsencesMatieres[matiere] = Absence.objects.filter(cours__matiere = matiere, cours__donne_a=groupe).count()
+
+	sortedListeAbsencesMatieres = sorted(listeAbsencesMatieres.items(), key=lambda x: x[1], reverse=True)
+	listeAbsencesMatieres = sortedListeAbsencesMatieres[:5]
+	
+	# 5 etudiants les plus absents
+	etudiantsAbsents = groupe.etudiants.annotate(num_abs=Count('absence')).order_by('-num_abs')[:5]
+	
+
+	return render(request, 'absences/infosGroupe.html', {'listeAbsencesMatieres': listeAbsencesMatieres,'groupe': groupe, 'absencesNonJustifiees':absencesNonJustifiees, 'absencesJustifiees':absencesJustifiees, 'totalAbsences':totalAbsences, 'etudiantsAbsents':etudiantsAbsents})
 	
 def listePromotions(request):
 	infos = []
