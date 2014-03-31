@@ -350,8 +350,8 @@ def infosGroupe(request, idGroupe):
 	groupe = get_object_or_404(Groupe, id=idGroupe)
 	
 	# Absences justifiées - non justifiées
-	absencesNonJustifiees = Absence.objects.filter(cours__donne_a=groupe, justifie=False).count()
-	absencesJustifiees = Absence.objects.filter(cours__donne_a=groupe, justifie=True).count()
+	absencesNonJustifiees = Absence.objects.filter(cours__donne_a=groupe, etudiant__in=groupe.etudiants.all(), justifie=False).count()
+	absencesJustifiees = Absence.objects.filter(cours__donne_a=groupe, etudiant__in=groupe.etudiants.all(), justifie=True).count()
 	totalAbsences = absencesJustifiees+absencesNonJustifiees
 	
 	# 5 matières avec le plus d'absents
@@ -359,7 +359,7 @@ def infosGroupe(request, idGroupe):
 
 	matieres = Matiere.objects.all()
 	for matiere in matieres:
-		listeAbsencesMatieres[matiere] = Absence.objects.filter(cours__matiere = matiere, cours__donne_a=groupe).count()
+		listeAbsencesMatieres[matiere] = Absence.objects.filter(cours__matiere = matiere, cours__donne_a=groupe, etudiant__in=groupe.etudiants.all()).count()
 
 	sortedListeAbsencesMatieres = sorted(listeAbsencesMatieres.items(), key=lambda x: x[1], reverse=True)
 	listeAbsencesMatieres = sortedListeAbsencesMatieres[:5]
