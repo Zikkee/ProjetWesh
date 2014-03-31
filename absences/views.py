@@ -66,6 +66,9 @@ class CoursListView(ListView):
 	template_name = 'absences/listeCours.html'
 	paginate_by = 10
 
+	def get_queryset(self):
+		return Cours.objects.order_by('-dateFin')
+
 # Affiche tous les cours d'une année
 # @permission_required('absences.add_cours')
 class CoursListViewAnne (CoursListView):
@@ -73,7 +76,7 @@ class CoursListViewAnne (CoursListView):
 		dateDebut = datetime(int(self.args[0]), 1, 1, 0, 0, 0)
 		dateFin = datetime(int(self.args[0]), 12, 31, 23, 59, 59)
 
-		return Cours.objects.filter(dateDebut__gte = dateDebut, dateFin__lte = dateFin)
+		return Cours.objects.filter(dateDebut__gte = dateDebut, dateFin__lte = dateFin).order_by('-dateFin')
 
 # Affiche tous les cours d'un mois
 # @permission_required('absences.add_cours')
@@ -84,7 +87,7 @@ class CoursListViewMois (CoursListView):
 
 		dateDebut = datetime(int(self.args[0]), int(self.args[1]), 1, 0, 0, 0)
 		dateFin = datetime(int(self.args[0]), int(self.args[1]), nbJours, 23, 59, 59)
-		return Cours.objects.filter(dateDebut__gte = dateDebut, dateFin__lte = dateFin)
+		return Cours.objects.filter(dateDebut__gte = dateDebut, dateFin__lte = dateFin).order_by('-dateFin')
 
 # Affiche tous les cours d'un jour
 # @permission_required('absences.add_cours')
@@ -92,7 +95,7 @@ class CoursListViewJour (CoursListView):
 	def get_queryset(self):
 		dateDebut = datetime(int(self.args[0]), int(self.args[1]), int(self.args[2]), 0, 0, 0)
 		dateFin = datetime(int(self.args[0]), int(self.args[1]), int(self.args[2]), 23, 59, 59)
-		return Cours.objects.filter(dateDebut__gte = dateDebut, dateFin__lte = dateFin)
+		return Cours.objects.filter(dateDebut__gte = dateDebut, dateFin__lte = dateFin).order_by('-dateFin')
 
 # Vue resensant tous les cours dispensés par un enseignant dont les absences n'ont pas été renseignées
 @permission_required('absences.add_absence')
@@ -148,11 +151,13 @@ def saisieAbsences(request, cours_id):
 # Vue permettant de voir la liste des élèves
 @login_required
 def listeEleve(request):
-	listeEleve = Etudiant.objects.all()
+	listeEleve = Etudiant.objects.all().order_by('-user__last_name')
 	dicoInfos = {}
+
 	for e in listeEleve:
-		groupesEtudiant = Groupe.objects.filter(etudiants=e)
+		groupesEtudiant = Groupe.objects.filter(etudiants = e)
 		dicoInfos[e] = groupesEtudiant
+
 	context = {'infos': dicoInfos}
 	return render(request, 'absences/listeEleve.html', context)
 
